@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="deep_purple_100">#FFD1C4E9</color>
+    <color name="deep_purple_200">#FFB39DDB</color>
+    <color name="deep_purple_300">#FF9575CD</color>
+    <color name="deep_purple_400">#FF7E57C2</color>
+    <color name="deep_purple_500">#FF673AB7</color>
+    <color name="deep_purple_700">#FF512DA8</color>
+    <color name="deep_purple_900">#FF311B92</color>
+
+    <color name="pink_100">#FFF8BBD0</color>
+    <color name="pink_200">#FFF48FB1</color>
+    <color name="pink_300">#FFF06292</color>
+    <color name="pink_400">#FFEC407A</color>
+    <color name="pink_500">#FFE91E63</color>
+    <color name="pink_700">#FFC2185B</color>
+
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="dark_green">#013220</color>
+    <color name="lavender">#E6E6FA</color>
+    <color name="light_green">#bed6d6</color>
+    <color name="green">#147c9c</color>
+    <color name="dark_red">#8B0000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="titleColor">#000000</color>
+</resources>

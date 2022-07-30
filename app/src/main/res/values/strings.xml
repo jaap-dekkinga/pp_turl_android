@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translate="false">HearAct</string>
+
+
+
+    <string name="pause_text">Pause</string>
+    <string name="play_text">Play</string>
+    <string name="scroll_to_top">Scroll To Top</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="menu_download">Downloads</string>
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_nothing_here">Ops, nothing here</string>
+    <string name="search_empty_title">No results.</string>
+    <string name="search_empty_description">Try searching again with another term.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_box_image_description">Empty Box</string>
+    <string name="time_placeholder">00:00</string>
+    <string name="podcast_title">Podcast:</string>
+    <string name="author_title">Author:</string>
+    <string name="episode_title">Episode:</string>
+    <string name="duration_title">Duration:</string>
+    <string name="current_time_title">Elapsed:</string>
+    <string name="date_released_title">Date Released:</string>
+    <string name="dismiss_button">Dismiss</string>
+    <string name="automatically_download">Automatic Download</string>
+    <string name="deleted_played_episodes">Automatic Delete</string>
+    <string name="search_option">Apple/Buzzsprout</string>
+
+
+
+
+    <string name="show_all">Show all</string>
+    <string name="most_searchable">Most searchable</string>
+    <string name="search_podcast_artist_hint">Search podcast, artist...</string>
+    <string name="favorites">Favorites</string>
+    <string name="discover_podcast">Discover Podcast</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="add_to_queue_label">Add to Bookmarks</string>
+    <string name="added_to_queue_label">Added to Bookmarks</string>
+    <plurals name="added_to_queue_batch_label">
+        <item quantity="one">%d episode added to Bookmarks.</item>
+        <item quantity="other">%d episodes added to Bookmarks.</item>
+    </plurals>
+    <string name="remove_from_queue_label">Remove from Bookmarks</string>
+    <plurals name="removed_from_queue_batch_label">
+        <item quantity="one">%d episode removed from Bookmarks.</item>
+        <item quantity="other">%d episodes removed from Bookmarks.</item>
+    </plurals>
+</resources>
