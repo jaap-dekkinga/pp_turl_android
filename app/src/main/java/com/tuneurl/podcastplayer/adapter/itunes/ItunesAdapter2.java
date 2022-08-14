@@ -14,7 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.tuneurl.podcastplayer.activity.MainActivity2;
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.net.discovery.PodcastSearchResult;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public class ItunesAdapter2 extends ArrayAdapter<PodcastSearchResult> {
 
         //Handle view holder stuff
         if(convertView == null) {
-            view = ((MainActivity2) context).getLayoutInflater()
+            view = ((MainActivity) context).getLayoutInflater()
                     .inflate(R.layout.itunes_podcast_listitem, parent, false);
             viewHolder = new PodcastViewHolder(view);
             view.setTag(viewHolder);

@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.event.DownloaderUpdate;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
@@ -34,15 +36,13 @@ import com.tuneurl.podcastplayer.event.playback.PlaybackPositionEvent;
 import com.tuneurl.podcastplayer.menuhandler.FeedItemMenuHandler;
 import com.tuneurl.podcastplayer.model.feed.Feed;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.chip.Chip;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.adapter.FeedSearchResultAdapter;
 import com.tuneurl.podcastplayer.view.EmptyViewHandler;
 import com.tuneurl.podcastplayer.view.EpisodeItemListRecyclerView;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -348,7 +348,7 @@ public class SearchFragment extends Fragment {
         List<Feed> feeds = FeedSearcher.searchFeeds(query);
         return new Pair<>(items, feeds);
     }
-    
+
     private void showInputMethod(View view) {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {

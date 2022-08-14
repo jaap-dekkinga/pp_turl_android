@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.PluralsRes;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.service.download.DownloadRequest;
 import com.tuneurl.podcastplayer.core.service.download.DownloadRequestCreator;
 import com.tuneurl.podcastplayer.core.service.download.DownloadService;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 
 public class EpisodeMultiSelectActionHandler {
     private static final String TAG = "EpisodeSelectHandler";

@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.FeedDiscoverAdapter;
 import com.tuneurl.podcastplayer.net.discovery.ItunesTopListLoader;
 import com.tuneurl.podcastplayer.net.discovery.PodcastSearchResult;
 import org.greenrobot.eventbus.EventBus;
@@ -24,9 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.activity.OnlineFeedViewActivity;
-import com.tuneurl.podcastplayer.adapter.FeedDiscoverAdapter;
 import com.tuneurl.podcastplayer.event.DiscoveryDefaultUpdateEvent;
 import io.reactivex.disposables.Disposable;
 

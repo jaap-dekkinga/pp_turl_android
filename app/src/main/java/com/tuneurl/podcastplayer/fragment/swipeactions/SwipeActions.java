@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.annimon.stream.Stream;
+import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
+import com.tuneurl.podcastplayer.fragment.EpisodesFragment;
+import com.tuneurl.podcastplayer.fragment.QueueFragment;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
 import com.tuneurl.podcastplayer.ui.common.ThemeUtils;
@@ -24,11 +27,9 @@ import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
 import com.tuneurl.podcastplayer.dialog.SwipeActionsDialog;
-import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
-import com.tuneurl.podcastplayer.fragment.EpisodesFragment;
 import com.tuneurl.podcastplayer.fragment.InboxFragment;
-import com.tuneurl.podcastplayer.fragment.QueueFragment;
 import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
+
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class SwipeActions extends ItemTouchHelper.SimpleCallback implements LifecycleObserver {

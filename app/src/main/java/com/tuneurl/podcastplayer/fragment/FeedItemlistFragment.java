@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.event.DownloaderUpdate;
 import com.tuneurl.podcastplayer.core.feed.FeedEvent;
@@ -52,18 +54,16 @@ import com.tuneurl.podcastplayer.model.download.DownloadStatus;
 import com.tuneurl.podcastplayer.model.feed.Feed;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.snackbar.Snackbar;
 import com.joanzapata.iconify.Iconify;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.dialog.DownloadLogDetailsDialog;
 import com.tuneurl.podcastplayer.dialog.FeedItemFilterDialog;
 import com.tuneurl.podcastplayer.dialog.RemoveFeedDialog;
 import com.tuneurl.podcastplayer.dialog.RenameItemDialog;
 import com.tuneurl.podcastplayer.view.ToolbarIconTintManager;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -130,6 +130,13 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         speedDialBinding = MultiSelectSpeedDialBinding.bind(viewBinding.getRoot());
         viewBinding.toolbar.inflateMenu(R.menu.feedlist);
         viewBinding.toolbar.setOnMenuItemClickListener(this);
+        viewBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getParentFragmentManager().popBackStack();
+            }
+        });
         viewBinding.toolbar.setOnLongClickListener(v -> {
             viewBinding.recyclerView.scrollToPosition(5);
             viewBinding.recyclerView.post(() -> viewBinding.recyclerView.smoothScrollToPosition(0));
@@ -140,8 +147,9 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(viewBinding.toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(viewBinding.toolbar, displayUpArrow);
         refreshToolbarState();
+
 
         viewBinding.recyclerView.setRecycledViewPool(((MainActivity) getActivity()).getRecycledViewPool());
         viewBinding.progLoading.setVisibility(View.VISIBLE);
@@ -520,11 +528,11 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    downloadStatus -> new DownloadLogDetailsDialog(getContext(), downloadStatus).show(),
-                    error -> error.printStackTrace(),
-                    () -> {
-                        ((MainActivity) getActivity()).loadChildFragment(new DownloadLogFragment());
-                    });
+                        downloadStatus -> new DownloadLogDetailsDialog(getContext(), downloadStatus).show(),
+                        error -> error.printStackTrace(),
+                        () -> {
+                            ((MainActivity) getActivity()).loadChildFragment(new DownloadLogFragment());
+                        });
     }
 
     private void showFeedInfo() {
@@ -538,21 +546,21 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
         Glide.with(getActivity())
                 .load(feed.getImageUrl())
                 .apply(new RequestOptions()
-                    .placeholder(R.color.image_readability_tint)
-                    .error(R.color.image_readability_tint)
-                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                    .transform(new FastBlurTransformation())
-                    .dontAnimate())
+                        .placeholder(R.color.image_readability_tint)
+                        .error(R.color.image_readability_tint)
+                        .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                        .transform(new FastBlurTransformation())
+                        .dontAnimate())
                 .into(viewBinding.imgvBackground);
 
         Glide.with(getActivity())
                 .load(feed.getImageUrl())
                 .apply(new RequestOptions()
-                    .placeholder(R.color.light_gray)
-                    .error(R.color.light_gray)
-                    .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
-                    .fitCenter()
-                    .dontAnimate())
+                        .placeholder(R.color.light_gray)
+                        .error(R.color.light_gray)
+                        .diskCacheStrategy(ApGlideSettings.AP_DISK_CACHE_STRATEGY)
+                        .fitCenter()
+                        .dontAnimate())
                 .into(viewBinding.header.imgvCover);
     }
 
@@ -564,16 +572,16 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    result -> {
-                        feed = result;
-                        refreshHeaderView();
-                        displayList();
-                    }, error -> {
-                        feed = null;
-                        refreshHeaderView();
-                        displayList();
-                        Log.e(TAG, Log.getStackTraceString(error));
-                    });
+                        result -> {
+                            feed = result;
+                            refreshHeaderView();
+                            displayList();
+                        }, error -> {
+                            feed = null;
+                            refreshHeaderView();
+                            displayList();
+                            Log.e(TAG, Log.getStackTraceString(error));
+                        });
     }
 
     @Nullable
@@ -609,8 +617,9 @@ public class FeedItemlistFragment extends Fragment implements AdapterView.OnItem
     }
 
     private class FeedItemListAdapter extends EpisodeItemListAdapter {
-        public FeedItemListAdapter(MainActivity mainActivity) {
-            super(mainActivity);
+
+        public FeedItemListAdapter(MainActivity MainActivity2) {
+            super(MainActivity2);
         }
 
         @Override

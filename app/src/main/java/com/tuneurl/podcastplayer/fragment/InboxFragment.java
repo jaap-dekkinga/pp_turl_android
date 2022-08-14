@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
 import com.tuneurl.podcastplayer.core.service.download.DownloadService;
@@ -20,7 +21,6 @@ import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
 import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -69,7 +69,7 @@ public class InboxFragment extends EpisodesListFragment implements Toolbar.OnMen
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
 
         SwipeActions swipeActions = new SwipeActions(this, TAG).attachTo(recyclerView);
         swipeActions.setFilter(new FeedItemFilter(FeedItemFilter.NEW));

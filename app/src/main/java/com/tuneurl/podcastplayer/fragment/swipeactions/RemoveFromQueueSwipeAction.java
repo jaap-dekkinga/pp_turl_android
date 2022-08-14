@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.fragment.app.Fragment;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.storage.DBReader;
 import com.tuneurl.podcastplayer.core.storage.DBWriter;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
@@ -11,7 +12,6 @@ import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 
 public class RemoveFromQueueSwipeAction implements SwipeAction {
 

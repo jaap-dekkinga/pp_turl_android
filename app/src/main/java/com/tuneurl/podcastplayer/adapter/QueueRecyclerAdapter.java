@@ -9,10 +9,10 @@ import android.view.View;
 
 import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
-import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import com.tuneurl.podcastplayer.R;
+import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 /**
  * List adapter for the queue.

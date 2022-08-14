@@ -18,6 +18,7 @@ import androidx.core.text.HtmlCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.sync.SyncService;
 import com.tuneurl.podcastplayer.core.sync.SynchronizationCredentials;
 import com.tuneurl.podcastplayer.core.sync.SynchronizationProviderViewData;
@@ -30,7 +31,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity2;
 import com.tuneurl.podcastplayer.dialog.AuthenticationDialog;
 
 public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompat {
@@ -50,7 +50,7 @@ public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompa
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity2) getActivity()).getSupportActionBar().setTitle(R.string.synchronization_pref);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.synchronization_pref);
         updateScreen();
         EventBus.getDefault().register(this);
     }
@@ -59,7 +59,7 @@ public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompa
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        ((MainActivity2) getActivity()).getSupportActionBar().setSubtitle("");
+        ((MainActivity) getActivity()).getSupportActionBar().setSubtitle("");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -73,7 +73,7 @@ public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompa
             updateLastSyncReport(SynchronizationSettings.isLastSyncSuccessful(),
                     SynchronizationSettings.getLastSyncAttempt());
         } else {
-            ((MainActivity2) getActivity()).getSupportActionBar().setSubtitle(event.getMessageResId());
+            ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(event.getMessageResId());
         }
     }
 
@@ -144,7 +144,7 @@ public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompa
                     SynchronizationSettings.getLastSyncAttempt());
         } else {
             findPreference(PREFERENCE_LOGOUT).setSummary(null);
-            ((MainActivity2) getActivity()).getSupportActionBar().setSubtitle(null);
+            ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(null);
         }
     }
 
@@ -217,6 +217,6 @@ public class SynchronizationPreferencesFragment2 extends PreferenceFragmentCompa
                         ? R.string.gpodnetsync_pref_report_successful : R.string.gpodnetsync_pref_report_failed),
                 DateUtils.getRelativeDateTimeString(getContext(),
                         lastTime, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
-        ((MainActivity2) getActivity()).getSupportActionBar().setSubtitle(status);
+        ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(status);
     }
 }

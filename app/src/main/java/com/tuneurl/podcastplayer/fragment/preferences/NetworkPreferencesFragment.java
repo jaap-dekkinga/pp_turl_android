@@ -8,10 +8,10 @@ import android.text.format.DateFormat;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 import com.tuneurl.podcastplayer.dialog.FeedRefreshIntervalDialog;
 import com.tuneurl.podcastplayer.dialog.ProxyDialog;
 
@@ -34,7 +34,7 @@ public class NetworkPreferencesFragment extends PreferenceFragmentCompat
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.network_pref);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.network_pref);
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -53,7 +53,7 @@ public class NetworkPreferencesFragment extends PreferenceFragmentCompat
 
     private void setupNetworkScreen() {
         findPreference(PREF_SCREEN_AUTODL).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_autodownload);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_autodownload);
             return true;
         });
         findPreference(UserPreferences.PREF_UPDATE_INTERVAL)
@@ -81,7 +81,7 @@ public class NetworkPreferencesFragment extends PreferenceFragmentCompat
 
     /**
      *  Used to init and handle changes to view
-      */
+     */
     private void setUpdateIntervalText() {
         Context context = getActivity().getApplicationContext();
         String val;

@@ -77,7 +77,7 @@ public class ItemPagerFragment extends Fragment implements Toolbar.OnMenuItemCli
         pager = layout.findViewById(R.id.pager);
         // FragmentStatePagerAdapter documentation:
         // > When using FragmentStatePagerAdapter the host ViewPager must have a valid ID set.
-        // When opening multiple ItemPagerFragments by clicking "item" -> "visit podcast" -> "item" -> etc,
+        // When opening multiple ItemPagerFragment2s by clicking "item" -> "visit podcast" -> "item" -> etc,
         // the ID is no longer unique and FragmentStatePagerAdapter does not display any pages.
         int newId = View.generateViewId();
         if (savedInstanceState != null && savedInstanceState.getInt(KEY_PAGER_ID, 0) != 0) {

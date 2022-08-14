@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import androidx.annotation.NonNull;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.storage.DBReader;
 import com.tuneurl.podcastplayer.core.storage.DBWriter;
 import com.tuneurl.podcastplayer.event.FavoritesEvent;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -18,13 +18,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tuneurl.podcastplayer.activity.MainActivity;
-
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 /**
  * Like 'EpisodesFragment' except that it only shows favorite episodes and
@@ -32,8 +31,8 @@ import com.tuneurl.podcastplayer.R;
  */
 public class FavoriteEpisodesFragment extends EpisodesListFragment {
 
-    private static final String TAG = "FavoriteEpisodesFrag";
-    private static final String PREF_NAME = "PrefFavoriteEpisodesFragment";
+    public static final String TAG = "FavoriteEpisodesFrag";
+    private static final String PREF_NAME = "PrefFavoriteEpisodesFragment2";
 
     @Override
     protected String getPrefName() {
@@ -56,6 +55,8 @@ public class FavoriteEpisodesFragment extends EpisodesListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = super.onCreateView(inflater, container, savedInstanceState);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.favorites));
+
         emptyView.setIcon(R.drawable.ic_star);
         emptyView.setTitle(R.string.no_fav_episodes_head_label);
         emptyView.setMessage(R.string.no_fav_episodes_label);
@@ -82,13 +83,16 @@ public class FavoriteEpisodesFragment extends EpisodesListFragment {
                     DBWriter.removeFavoriteItem(item);
 
                     ((MainActivity) getActivity()).showSnackbarAbovePlayer(R.string.removed_item, Snackbar.LENGTH_LONG)
-                        .setAction(getString(R.string.undo), v -> DBWriter.addFavoriteItem(item));
+                            .setAction(getString(R.string.undo), v -> DBWriter.addFavoriteItem(item));
                 }
             }
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
+
+
+
         return root;
     }
 

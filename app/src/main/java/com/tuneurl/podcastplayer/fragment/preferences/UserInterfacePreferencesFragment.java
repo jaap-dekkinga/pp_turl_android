@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceFragmentCompat;
 import android.widget.ListView;
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.SubscriptionsFilterDialog;
 import com.tuneurl.podcastplayer.dialog.FeedSortDialog;
 import com.tuneurl.podcastplayer.fragment.NavDrawerFragment;
@@ -34,7 +34,7 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.user_interface_label);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.user_interface_label);
     }
 
     private void setupInterfaceScreen() {
@@ -80,10 +80,10 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
                     builder.setTitle(R.string.back_button_go_to_page_title);
                     builder.setSingleChoiceItems(navTitles, ArrayUtils.indexOf(navTags,
                             UserPreferences.getBackButtonGoToPage()), (dialogInterface, i) -> {
-                            if (i >= 0) {
-                                choice[0] = navTags[i];
-                            }
-                        });
+                        if (i >= 0) {
+                            choice[0] = navTags[i];
+                        }
+                    });
                     builder.setPositiveButton(R.string.confirm_label, (dialogInterface, i) -> UserPreferences.setBackButtonGoToPage(choice[0]));
                     builder.setNegativeButton(R.string.cancel_label, null);
                     builder.create().show();
@@ -103,7 +103,7 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
                 }));
         findPreference(PREF_SWIPE)
                 .setOnPreferenceClickListener(preference -> {
-                    ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_swipe);
+                    ((MainActivity) getActivity()).openScreen(R.xml.preferences_swipe);
                     return true;
                 });
 

@@ -19,7 +19,6 @@ import com.tuneurl.podcastplayer.core.util.FeedItemUtil;
 import com.tuneurl.podcastplayer.fragment.ItemPagerFragment;
 import com.tuneurl.podcastplayer.menuhandler.FeedItemMenuHandler;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 /**
  * List adapter for the list of new episodes.
@@ -35,14 +35,14 @@ import com.tuneurl.podcastplayer.R;
 public class EpisodeItemListAdapter extends SelectableAdapter<EpisodeItemViewHolder>
         implements View.OnCreateContextMenuListener {
 
-    private final WeakReference<MainActivity> mainActivityRef;
+    private final WeakReference<MainActivity> MainActivity2Ref;
     private List<FeedItem> episodes = new ArrayList<>();
     private FeedItem longPressedItem;
     int longPressedPosition = 0; // used to init actionMode
 
     public EpisodeItemListAdapter(MainActivity mainActivity) {
         super(mainActivity);
-        this.mainActivityRef = new WeakReference<>(mainActivity);
+        this.MainActivity2Ref = new WeakReference<>(mainActivity);
         setHasStableIds(true);
     }
 
@@ -60,7 +60,7 @@ public class EpisodeItemListAdapter extends SelectableAdapter<EpisodeItemViewHol
     @NonNull
     @Override
     public final EpisodeItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new EpisodeItemViewHolder(mainActivityRef.get(), parent);
+        return new EpisodeItemViewHolder(MainActivity2Ref.get(), parent);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EpisodeItemListAdapter extends SelectableAdapter<EpisodeItemViewHol
         holder.bind(item);
 
         holder.itemView.setOnClickListener(v -> {
-            MainActivity activity = mainActivityRef.get();
+            MainActivity activity = MainActivity2Ref.get();
             if (activity != null && !inActionMode()) {
                 long[] ids = FeedItemUtil.getIds(episodes);
                 int position = ArrayUtils.indexOf(ids, item.getId());
@@ -170,12 +170,12 @@ public class EpisodeItemListAdapter extends SelectableAdapter<EpisodeItemViewHol
     }
 
     protected Activity getActivity() {
-        return mainActivityRef.get();
+        return MainActivity2Ref.get();
     }
 
     @Override
     public void onCreateContextMenu(final ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater = mainActivityRef.get().getMenuInflater();
+        MenuInflater inflater = MainActivity2Ref.get().getMenuInflater();
         if (inActionMode()) {
             inflater.inflate(R.menu.multi_select_context_popup, menu);
         } else {

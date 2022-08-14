@@ -92,6 +92,9 @@ dependencies {
     implementation project(':ui:common')
     implementation project(':ui:i18n')
     implementation project(':ui:statistics')
+    implementation project(path: ':tuneurl_sdk')
+    implementation project(path: ':tuneurl_sdk')
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"

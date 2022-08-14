@@ -3,10 +3,10 @@ package com.tuneurl.podcastplayer.fragment.preferences;
 import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 import com.tuneurl.podcastplayer.dialog.ChooseDataFolderDialog;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public class StoragePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.storage_pref);
+        //((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.storage_pref);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StoragePreferencesFragment extends PreferenceFragmentCompat {
         );
         findPreference(PREF_IMPORT_EXPORT).setOnPreferenceClickListener(
                 preference -> {
-                    ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_import_export);
+                    ((MainActivity) getActivity()).openScreen(R.xml.preferences_import_export);
                     return true;
                 }
         );

@@ -3,7 +3,7 @@ package com.tuneurl.podcastplayer.fragment.preferences;
 import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.SwipeActionsDialog;
 import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
 import com.tuneurl.podcastplayer.fragment.FeedItemlistFragment;
@@ -41,7 +41,7 @@ public class SwipePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.swipeactions_label);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.swipeactions_label);
     }
 
 }

@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.preferences.PlaybackPreferences;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 import com.tuneurl.podcastplayer.core.service.playback.PlaybackService;
@@ -24,7 +25,6 @@ import com.tuneurl.podcastplayer.net.sync.model.EpisodeAction;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.ShareDialog;
 
 /**

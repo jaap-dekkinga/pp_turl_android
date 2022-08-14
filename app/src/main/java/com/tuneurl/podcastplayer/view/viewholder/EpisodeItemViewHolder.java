@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.CoverLoader;
 import com.tuneurl.podcastplayer.adapter.actionbutton.ItemActionButton;
 import com.tuneurl.podcastplayer.core.feed.util.ImageResourceUtils;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
@@ -34,8 +36,6 @@ import com.tuneurl.podcastplayer.ui.common.ThemeUtils;
 import com.joanzapata.iconify.Iconify;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.CoverLoader;
 
 /**
  * Holds the view which shows FeedItems.

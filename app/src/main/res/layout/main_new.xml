@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tuneurl.podcastplayer.activity.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/fragmentTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/titleColor"
+            android:layout_margin="20dp"
+            android:layout_alignParentTop="true"/>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_navigation_bar"
+            android:elevation="@dimen/elevation_medium"
+            app:menu="@menu/navigation_bar_items"
+            android:layout_alignParentBottom="true"/>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/main_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:windowContentOverlay"
+            tools:background="@android:color/holo_red_dark"
+            android:layout_below="@id/fragmentTitle"
+            android:layout_above="@id/bottom_navigation_view"/>
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottom_navigation_view">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/audioplayerFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/windowBackground"
+                android:elevation="8dp"
+                android:visibility="gone"
+                app:layout_behavior="com.tuneurl.podcastplayer.view.LockableBottomSheetBehavior" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

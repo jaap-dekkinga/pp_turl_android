@@ -42,6 +42,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.preference.PreferenceManager;
 
+import com.dekidea.tuneurl.util.TuneURLManager;
 import com.tuneurl.podcastplayer.event.MessageEvent;
 import com.tuneurl.podcastplayer.event.PlayerErrorEvent;
 import com.tuneurl.podcastplayer.event.playback.BufferUpdateEvent;
@@ -326,6 +327,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         super.onDestroy();
         Log.d(TAG, "Service is about to be destroyed");
 
+        TuneURLManager.stopTuneURLService(getApplicationContext());
+
         if (notificationBuilder.getPlayerStatus() == PlayerStatus.PLAYING) {
             notificationBuilder.setPlayerStatus(PlayerStatus.STOPPED);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -479,10 +482,14 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
     @Override
     public IBinder onBind(Intent intent) {
+
         Log.d(TAG, "Received onBind event");
+
         if (intent.getAction() != null && TextUtils.equals(intent.getAction(), MediaBrowserServiceCompat.SERVICE_INTERFACE)) {
+
             return super.onBind(intent);
-        } else {
+        }
+        else {
             return mBinder;
         }
     }
@@ -491,6 +498,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "OnStartCommand called");
+
+        TuneURLManager.startTuneURLService(getApplicationContext());
 
         stateManager.startForeground(R.id.notification_playing, notificationBuilder.build());
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -551,6 +560,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                 return Service.START_NOT_STICKY;
             }
         }
+
+
 
         return Service.START_NOT_STICKY;
     }
@@ -883,6 +894,10 @@ public class PlaybackService extends MediaBrowserServiceCompat {
             }
             playable.onPlaybackStart();
             taskManager.startPositionSaver();
+
+            TuneURLManager.startScanning(getApplicationContext(),
+                    playable.getLocalMediaUrl(),
+                    (long)mediaPlayer.getPosition() * 1000L);
         }
 
         @Override
@@ -899,6 +914,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                 }
                 playable.onPlaybackPause(getApplicationContext());
             }
+
+            TuneURLManager.stopScanning(getApplicationContext());
         }
 
         @Override
@@ -916,6 +933,9 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         @Override
         public void onPlaybackEnded(MediaType mediaType, boolean stopPlaying) {
             PlaybackService.this.onPlaybackEnded(mediaType, stopPlaying);
+
+            System.out.println("onPlaybackEnded()");
+            TuneURLManager.stopScanning(getApplicationContext());
         }
 
         @Override

@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.adapter.actionbutton.DeleteActionButton;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.event.DownloadLogEvent;
@@ -31,14 +33,12 @@ import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
 import com.tuneurl.podcastplayer.menuhandler.FeedItemMenuHandler;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.snackbar.Snackbar;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.view.EmptyViewHandler;
 import com.tuneurl.podcastplayer.view.EpisodeItemListRecyclerView;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -77,22 +77,15 @@ public class CompletedDownloadsFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View root = inflater.inflate(R.layout.simple_list_fragment, container, false);
-        toolbar = root.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.downloads_label);
-        toolbar.inflateMenu(R.menu.downloads_completed);
-        toolbar.setOnMenuItemClickListener(this);
-        toolbar.setOnLongClickListener(v -> {
-            recyclerView.scrollToPosition(5);
-            recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
-            return false;
-        });
-        refreshToolbarState();
+
         displayUpArrow = getParentFragmentManager().getBackStackEntryCount() != 0;
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.downloaded));
 
         recyclerView = root.findViewById(R.id.recyclerView);
         recyclerView.setRecycledViewPool(((MainActivity) getActivity()).getRecycledViewPool());
@@ -192,9 +185,7 @@ public class CompletedDownloadsFragment extends Fragment
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DownloadEvent event) {
         Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
-        if (event.hasChangedFeedUpdateStatus(isUpdatingFeeds)) {
-            refreshToolbarState();
-        }
+
         if (!Arrays.equals(event.update.mediaIds, runningDownloads)) {
             runningDownloads = event.update.mediaIds;
             loadItems();
@@ -272,11 +263,6 @@ public class CompletedDownloadsFragment extends Fragment
         }
     }
 
-    private void refreshToolbarState() {
-        isUpdatingFeeds = MenuItemUtils.updateRefreshMenuItem(toolbar.getMenu(),
-                R.id.refresh_item, updateRefreshMenuItemChecker);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerStatusChanged(PlayerStatusEvent event) {
         loadItems();
@@ -313,13 +299,13 @@ public class CompletedDownloadsFragment extends Fragment
             currentDownloads.addAll(downloadedItems);
             return currentDownloads;
         })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(result -> {
-            items = result;
-            adapter.updateItems(result);
-            progressBar.setVisibility(View.GONE);
-        }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    items = result;
+                    adapter.updateItems(result);
+                    progressBar.setVisibility(View.GONE);
+                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
     @Override

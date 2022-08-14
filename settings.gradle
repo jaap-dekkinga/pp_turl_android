@@ -2,6 +2,7 @@ include ':app'
 include ':core'
 include ':event'
 include ':model'
+include ':tuneurl_sdk'
 
 include ':net:discovery'
 include ':net:ssl'
@@ -21,3 +22,5 @@ include ':ui:common'
 include ':ui:i18n'
 include ':ui:png-icons'
 include ':ui:statistics'
+
+

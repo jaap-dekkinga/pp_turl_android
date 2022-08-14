@@ -9,12 +9,12 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.preferences.UsageStatistics;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 import com.tuneurl.podcastplayer.event.UnreadItemsUpdateEvent;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 import com.tuneurl.podcastplayer.dialog.SkipPreferenceDialog;
 import com.tuneurl.podcastplayer.dialog.VariableSpeedDialog;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.playback_pref);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.playback_pref);
     }
 
     private void setupPlaybackScreen() {

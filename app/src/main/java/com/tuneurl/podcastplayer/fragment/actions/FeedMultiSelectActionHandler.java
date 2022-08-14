@@ -6,6 +6,7 @@ import androidx.annotation.PluralsRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Consumer;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.storage.DBWriter;
 import com.tuneurl.podcastplayer.databinding.PlaybackSpeedFeedSettingDialogBinding;
 import com.tuneurl.podcastplayer.fragment.preferences.dialog.PreferenceListDialog;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.RemoveFeedDialog;
 import com.tuneurl.podcastplayer.dialog.TagSettingsDialog;
 

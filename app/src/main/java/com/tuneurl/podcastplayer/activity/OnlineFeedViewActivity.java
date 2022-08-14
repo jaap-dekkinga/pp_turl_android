@@ -235,7 +235,7 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             //Intent destIntent = new Intent(this, MainActivity.class);
-            Intent destIntent = new Intent(this, MainActivity2.class);
+            Intent destIntent = new Intent(this, MainActivity.class);
             if (NavUtils.shouldUpRecreateTask(this, destIntent)) {
                 startActivity(destIntent);
             } else {
@@ -540,13 +540,13 @@ public class OnlineFeedViewActivity extends AppCompatActivity {
 
          */
 
-        Intent intent = MainActivity2.getIntentToOpenFeed(this, getFeedId());
+        Intent intent = MainActivity.getIntentToOpenFeed(this, getFeedId());
         /*
-        intent.putExtra(MainActivity2.EXTRA_STARTED_FROM_SEARCH,
-                getIntent().getBooleanExtra(MainActivity2.EXTRA_STARTED_FROM_SEARCH, false));
+        intent.putExtra(MainActivity.EXTRA_STARTED_FROM_SEARCH,
+                getIntent().getBooleanExtra(MainActivity.EXTRA_STARTED_FROM_SEARCH, false));
 
          */
-        intent.putExtra(MainActivity2.EXTRA_STARTED_FROM_SEARCH, true);
+        intent.putExtra(MainActivity.EXTRA_STARTED_FROM_SEARCH, true);
 
         finish();
         startActivity(intent);

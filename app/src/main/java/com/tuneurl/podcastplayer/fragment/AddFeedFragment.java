@@ -1,6 +1,5 @@
 package com.tuneurl.podcastplayer.fragment;
 
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -21,25 +20,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.activity.OnlineFeedViewActivity;
 import com.tuneurl.podcastplayer.core.storage.DBTasks;
 import com.tuneurl.podcastplayer.databinding.AddfeedBinding;
 import com.tuneurl.podcastplayer.databinding.EditTextDialogBinding;
 import com.tuneurl.podcastplayer.model.feed.Feed;
 import com.tuneurl.podcastplayer.model.feed.SortOrder;
 import com.tuneurl.podcastplayer.net.discovery.CombinedSearcher;
-import com.tuneurl.podcastplayer.net.discovery.FyydPodcastSearcher;
-import com.tuneurl.podcastplayer.net.discovery.GpodnetPodcastSearcher;
-import com.tuneurl.podcastplayer.net.discovery.ItunesPodcastSearcher;
-import com.tuneurl.podcastplayer.net.discovery.PodcastIndexPodcastSearcher;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.activity.OnlineFeedViewActivity;
 import com.tuneurl.podcastplayer.activity.OpmlImportActivity;
 
 import io.reactivex.Observable;
@@ -73,56 +67,17 @@ public class AddFeedFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         viewBinding = AddfeedBinding.inflate(getLayoutInflater());
         activity = (MainActivity) getActivity();
+        activity.setSelectedFragmentTitle(getString(R.string.discover_podcast));
 
-        Toolbar toolbar = viewBinding.toolbar;
         displayUpArrow = getParentFragmentManager().getBackStackEntryCount() != 0;
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
-
-        viewBinding.searchItunesButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(ItunesPodcastSearcher.class)));
-        viewBinding.searchFyydButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(FyydPodcastSearcher.class)));
-        viewBinding.searchGPodderButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(GpodnetPodcastSearcher.class)));
-        viewBinding.searchPodcastIndexButton.setOnClickListener(v
-                -> activity.loadChildFragment(OnlineSearchFragment.newInstance(PodcastIndexPodcastSearcher.class)));
 
         viewBinding.combinedFeedSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             performSearch();
             return true;
         });
-
-        viewBinding.addViaUrlButton.setOnClickListener(v
-                -> showAddViaUrlDialog());
-
-        viewBinding.opmlImportButton.setOnClickListener(v -> {
-            try {
-                chooseOpmlImportPathLauncher.launch("*/*");
-            } catch (ActivityNotFoundException e) {
-                e.printStackTrace();
-                ((MainActivity) getActivity())
-                        .showSnackbarAbovePlayer(R.string.unable_to_start_system_file_manager, Snackbar.LENGTH_LONG);
-            }
-        });
-
-        viewBinding.addLocalFolderButton.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT < 21) {
-                return;
-            }
-            try {
-                addLocalFolderLauncher.launch(null);
-            } catch (ActivityNotFoundException e) {
-                e.printStackTrace();
-                ((MainActivity) getActivity())
-                        .showSnackbarAbovePlayer(R.string.unable_to_start_system_file_manager, Snackbar.LENGTH_LONG);
-            }
-        });
-        if (Build.VERSION.SDK_INT < 21) {
-            viewBinding.addLocalFolderButton.setVisibility(View.GONE);
-        }
 
         viewBinding.searchButton.setOnClickListener(view -> performSearch());
 

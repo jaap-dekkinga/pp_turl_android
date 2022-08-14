@@ -35,6 +35,7 @@ dependencies {
     implementation project(':ui:common')
     implementation project(':ui:i18n')
     implementation project(':ui:png-icons')
+    implementation project(path: ':tuneurl_sdk')
 
     annotationProcessor "androidx.annotation:annotation:$annotationVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"

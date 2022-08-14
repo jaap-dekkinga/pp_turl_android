@@ -11,10 +11,10 @@ import com.tuneurl.podcastplayer.activity.DownloadAuthenticationActivity;
 import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.DownloadServiceCallbacks;
 import com.tuneurl.podcastplayer.core.service.download.DownloadRequest;
-import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
-import com.tuneurl.podcastplayer.fragment.QueueFragment;
 
 import com.tuneurl.podcastplayer.R;
+import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
+import com.tuneurl.podcastplayer.fragment.QueueFragment;
 
 
 public class DownloadServiceCallbacksImpl implements DownloadServiceCallbacks {

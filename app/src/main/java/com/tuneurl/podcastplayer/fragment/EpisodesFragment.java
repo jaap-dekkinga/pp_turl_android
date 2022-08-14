@@ -18,7 +18,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 
 public class EpisodesFragment extends PagedToolbarFragment {
 
@@ -48,7 +47,7 @@ public class EpisodesFragment extends PagedToolbarFragment {
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
 
         ViewPager2 viewPager = rootView.findViewById(R.id.viewpager);
         viewPager.setAdapter(new EpisodesPagerAdapter(this));

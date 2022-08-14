@@ -8,12 +8,11 @@ import androidx.preference.PreferenceManager;
 import com.tuneurl.podcastplayer.BuildConfig;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 import com.tuneurl.podcastplayer.core.util.download.AutoUpdateManager;
+import com.tuneurl.podcastplayer.fragment.QueueFragment;
 import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeAction;
-import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
 import com.tuneurl.podcastplayer.error.CrashReportWriter;
 import com.tuneurl.podcastplayer.R;
-
-import com.tuneurl.podcastplayer.fragment.QueueFragment;
+import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
 
 public class PreferenceUpgrader {
     private static final String PREF_CONFIGURED_VERSION = "version_code";

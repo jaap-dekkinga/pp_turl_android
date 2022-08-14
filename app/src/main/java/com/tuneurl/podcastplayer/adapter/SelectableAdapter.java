@@ -167,7 +167,7 @@ public abstract class SelectableAdapter<T extends RecyclerView.ViewHolder> exten
         }
         actionMode.setTitle(activity.getResources()
                 .getQuantityString(R.plurals.num_selected_label, selectedIds.size(),
-                selectedCount, totalCount));
+                        selectedCount, totalCount));
     }
 
     public void setOnSelectModeListener(OnSelectModeListener onSelectModeListener) {

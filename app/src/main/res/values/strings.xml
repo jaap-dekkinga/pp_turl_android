@@ -3,7 +3,6 @@
     <string name="app_name" translate="false">HearAct</string>
 
 
-
     <string name="pause_text">Pause</string>
     <string name="play_text">Play</string>
     <string name="scroll_to_top">Scroll To Top</string>
@@ -31,8 +30,6 @@
     <string name="search_option">Apple/Buzzsprout</string>
 
 
-
-
     <string name="show_all">Show all</string>
     <string name="most_searchable">Most searchable</string>
     <string name="search_podcast_artist_hint">Search podcast, artist...</string>
@@ -51,4 +48,7 @@
         <item quantity="one">%d episode removed from Bookmarks.</item>
         <item quantity="other">%d episodes removed from Bookmarks.</item>
     </plurals>
+
+    <string name="open">Open</string>
+    <string name="ignore">Ignore</string>
 </resources>

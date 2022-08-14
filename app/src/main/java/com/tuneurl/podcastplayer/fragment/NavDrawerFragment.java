@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.dialog.ConfirmationDialog;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
@@ -35,7 +36,6 @@ import com.tuneurl.podcastplayer.event.UnreadItemsUpdateEvent;
 import com.tuneurl.podcastplayer.model.feed.Feed;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 import com.tuneurl.podcastplayer.adapter.NavListAdapter;
 import com.tuneurl.podcastplayer.dialog.TagSettingsDialog;

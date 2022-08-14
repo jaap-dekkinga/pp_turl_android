@@ -1,7 +1,6 @@
 package com.tuneurl.podcastplayer.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,20 +17,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.tuneurl.podcastplayer.core.dialog.ConfirmationDialog;
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
+import com.tuneurl.podcastplayer.adapter.QueueRecyclerAdapter;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.event.DownloaderUpdate;
 import com.tuneurl.podcastplayer.core.feed.util.PlaybackSpeedUtils;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
-import com.tuneurl.podcastplayer.core.service.download.DownloadService;
 import com.tuneurl.podcastplayer.core.storage.DBReader;
 import com.tuneurl.podcastplayer.core.storage.DBWriter;
 import com.tuneurl.podcastplayer.core.util.Converter;
@@ -47,17 +46,13 @@ import com.tuneurl.podcastplayer.fragment.swipeactions.SwipeActions;
 import com.tuneurl.podcastplayer.menuhandler.FeedItemMenuHandler;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.model.feed.FeedItemFilter;
-import com.tuneurl.podcastplayer.model.feed.SortOrder;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.snackbar.Snackbar;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
-import com.tuneurl.podcastplayer.adapter.QueueRecyclerAdapter;
 import com.tuneurl.podcastplayer.view.EmptyViewHandler;
 import com.tuneurl.podcastplayer.view.EpisodeItemListRecyclerView;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -73,8 +68,7 @@ import java.util.Locale;
 /**
  * Shows all items in the queue.
  */
-public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickListener,
-        EpisodeItemListAdapter.OnSelectModeListener {
+public class QueueFragment extends Fragment implements EpisodeItemListAdapter.OnSelectModeListener {
     public static final String TAG = "QueueFragment";
     private static final String KEY_UP_ARROW = "up_arrow";
 
@@ -83,8 +77,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     private QueueRecyclerAdapter recyclerAdapter;
     private EmptyViewHandler emptyView;
     private ProgressBar progLoading;
-    private Toolbar toolbar;
-    private boolean displayUpArrow;
 
     private List<FeedItem> queue;
 
@@ -193,7 +185,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
         Log.d(TAG, "onEventMainThread() called with DownloadEvent");
         DownloaderUpdate update = event.update;
         if (event.hasChangedFeedUpdateStatus(isUpdatingFeeds)) {
-            refreshToolbarState();
+            
         }
         if (recyclerAdapter != null && update.mediaIds.length > 0) {
             for (long mediaId : update.mediaIds) {
@@ -221,19 +213,14 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPlayerStatusChanged(PlayerStatusEvent event) {
-        loadItems(false);
-        if (isUpdatingFeeds != updateRefreshMenuItemChecker.isRefreshing()) {
-            refreshToolbarState();
-        }
+        
+        loadItems(false);       
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUnreadItemsChanged(UnreadItemsUpdateEvent event) {
         // Sent when playback position is reset
         loadItems(false);
-        if (isUpdatingFeeds != updateRefreshMenuItemChecker.isRefreshing()) {
-            refreshToolbarState();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -260,96 +247,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
             recyclerAdapter.endSelectMode();
         }
         recyclerAdapter = null;
-    }
-
-    private final MenuItemUtils.UpdateRefreshMenuItemChecker updateRefreshMenuItemChecker =
-            () -> DownloadService.isRunning && DownloadService.isDownloadingFeeds();
-
-    private void refreshToolbarState() {
-        boolean keepSorted = UserPreferences.isQueueKeepSorted();
-        toolbar.getMenu().findItem(R.id.queue_lock).setChecked(UserPreferences.isQueueLocked());
-        toolbar.getMenu().findItem(R.id.queue_lock).setVisible(!keepSorted);
-        toolbar.getMenu().findItem(R.id.queue_sort_random).setVisible(!keepSorted);
-        toolbar.getMenu().findItem(R.id.queue_keep_sorted).setChecked(keepSorted);
-        isUpdatingFeeds = MenuItemUtils.updateRefreshMenuItem(toolbar.getMenu(),
-                R.id.refresh_item, updateRefreshMenuItemChecker);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        final int itemId = item.getItemId();
-        if (itemId == R.id.queue_lock) {
-            toggleQueueLock();
-            return true;
-        } else if (itemId == R.id.refresh_item) {
-            AutoUpdateManager.runImmediate(requireContext());
-            return true;
-        } else if (itemId == R.id.clear_queue) {
-            // make sure the user really wants to clear the queue
-            ConfirmationDialog conDialog = new ConfirmationDialog(getActivity(),
-                    R.string.clear_queue_label,
-                    R.string.clear_queue_confirmation_msg) {
-
-                @Override
-                public void onConfirmButtonPressed(
-                        DialogInterface dialog) {
-                    dialog.dismiss();
-                    DBWriter.clearQueue();
-                }
-            };
-            conDialog.createNewDialog().show();
-            return true;
-        } else if (itemId == R.id.queue_sort_episode_title_asc) {
-            setSortOrder(SortOrder.EPISODE_TITLE_A_Z);
-            return true;
-        } else if (itemId == R.id.queue_sort_episode_title_desc) {
-            setSortOrder(SortOrder.EPISODE_TITLE_Z_A);
-            return true;
-        } else if (itemId == R.id.queue_sort_date_asc) {
-            setSortOrder(SortOrder.DATE_OLD_NEW);
-            return true;
-        } else if (itemId == R.id.queue_sort_date_desc) {
-            setSortOrder(SortOrder.DATE_NEW_OLD);
-            return true;
-        } else if (itemId == R.id.queue_sort_duration_asc) {
-            setSortOrder(SortOrder.DURATION_SHORT_LONG);
-            return true;
-        } else if (itemId == R.id.queue_sort_duration_desc) {
-            setSortOrder(SortOrder.DURATION_LONG_SHORT);
-            return true;
-        } else if (itemId == R.id.queue_sort_feed_title_asc) {
-            setSortOrder(SortOrder.FEED_TITLE_A_Z);
-            return true;
-        } else if (itemId == R.id.queue_sort_feed_title_desc) {
-            setSortOrder(SortOrder.FEED_TITLE_Z_A);
-            return true;
-        } else if (itemId == R.id.queue_sort_random) {
-            setSortOrder(SortOrder.RANDOM);
-            return true;
-        } else if (itemId == R.id.queue_sort_smart_shuffle_asc) {
-            setSortOrder(SortOrder.SMART_SHUFFLE_OLD_NEW);
-            return true;
-        } else if (itemId == R.id.queue_sort_smart_shuffle_desc) {
-            setSortOrder(SortOrder.SMART_SHUFFLE_NEW_OLD);
-            return true;
-        } else if (itemId == R.id.queue_keep_sorted) {
-            boolean keepSortedOld = UserPreferences.isQueueKeepSorted();
-            boolean keepSortedNew = !keepSortedOld;
-            UserPreferences.setQueueKeepSorted(keepSortedNew);
-            if (keepSortedNew) {
-                SortOrder sortOrder = UserPreferences.getQueueKeepSortedOrder();
-                DBWriter.reorderQueue(sortOrder, true);
-            }
-            if (recyclerAdapter != null) {
-                recyclerAdapter.updateDragDropEnabled();
-            }
-            refreshToolbarState();
-            return true;
-        } else if (itemId == R.id.action_search) {
-            ((MainActivity) getActivity()).loadChildFragment(SearchFragment.newInstance());
-            return true;
-        }
-        return false;
     }
 
     private void toggleQueueLock() {
@@ -381,7 +278,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     private void setQueueLocked(boolean locked) {
         UserPreferences.setQueueLocked(locked);
-        refreshToolbarState();
+        
         if (recyclerAdapter != null) {
             recyclerAdapter.updateDragDropEnabled();
         }
@@ -392,16 +289,6 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
                 ((MainActivity) getActivity()).showSnackbarAbovePlayer(R.string.queue_unlocked, Snackbar.LENGTH_SHORT);
             }
         }
-    }
-
-    /**
-     * This method is called if the user clicks on a sort order menu item.
-     *
-     * @param sortOrder New sort order.
-     */
-    private void setSortOrder(SortOrder sortOrder) {
-        UserPreferences.setQueueKeepSortedOrder(sortOrder);
-        DBWriter.reorderQueue(sortOrder, true);
     }
 
     @Override
@@ -444,20 +331,8 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.queue_fragment, container, false);
-        toolbar = root.findViewById(R.id.toolbar);
-        toolbar.setOnMenuItemClickListener(this);
-        toolbar.setOnLongClickListener(v -> {
-            recyclerView.scrollToPosition(5);
-            recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
-            return false;
-        });
-        displayUpArrow = getParentFragmentManager().getBackStackEntryCount() != 0;
-        if (savedInstanceState != null) {
-            displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
-        }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
-        toolbar.inflateMenu(R.menu.queue);
-        refreshToolbarState();
+        
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.bookmarks));
 
         infoBar = root.findViewById(R.id.info_bar);
         recyclerView = root.findViewById(R.id.recyclerView);
@@ -521,21 +396,27 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putBoolean(KEY_UP_ARROW, displayUpArrow);
+
         super.onSaveInstanceState(outState);
     }
 
     private void onFragmentLoaded(final boolean restoreScrollPosition) {
+
         if (queue != null) {
+
             if (recyclerAdapter == null) {
+
                 MainActivity activity = (MainActivity) getActivity();
+
                 recyclerAdapter = new QueueRecyclerAdapter(activity, swipeActions) {
+
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                         super.onCreateContextMenu(menu, v, menuInfo);
                         MenuItemUtils.setOnClickListeners(menu, QueueFragment.this::onContextItemSelected);
                     }
                 };
+
                 recyclerAdapter.setOnSelectModeListener(this);
                 recyclerView.setAdapter(recyclerAdapter);
                 emptyView.updateAdapter(recyclerAdapter);
@@ -552,7 +433,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
 
         // we need to refresh the options menu because it sometimes
         // needs data that may have just been loaded.
-        refreshToolbarState();
+        
 
         refreshInfoBar();
     }
@@ -605,7 +486,7 @@ public class QueueFragment extends Fragment implements Toolbar.OnMenuItemClickLi
     public void onStartSelectMode() {
         swipeActions.detach();
         speedDialView.setVisibility(View.VISIBLE);
-        refreshToolbarState();
+        
         infoBar.setVisibility(View.GONE);
     }
 

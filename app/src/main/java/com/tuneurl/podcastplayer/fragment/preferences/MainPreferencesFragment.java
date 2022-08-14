@@ -11,12 +11,12 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.bytehamster.lib.preferencesearch.SearchConfiguration;
 import com.bytehamster.lib.preferencesearch.SearchPreference;
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.util.IntentUtils;
 import com.tuneurl.podcastplayer.fragment.preferences.about.AboutFragment;
 
 import com.tuneurl.podcastplayer.R;
 import com.tuneurl.podcastplayer.activity.BugReportActivity;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -78,32 +78,32 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.settings_label);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.settings_label));
     }
 
     private void setupMainScreen() {
         findPreference(PREF_SCREEN_USER_INTERFACE).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_user_interface);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_user_interface);
             return true;
         });
         findPreference(PREF_SCREEN_PLAYBACK).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_playback);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_playback);
             return true;
         });
         findPreference(PREF_SCREEN_NETWORK).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_network);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_network);
             return true;
         });
         findPreference(PREF_SCREEN_SYNCHRONIZATION).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_synchronization);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_synchronization);
             return true;
         });
         findPreference(PREF_SCREEN_STORAGE).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_storage);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_storage);
             return true;
         });
         findPreference(PREF_NOTIFICATION).setOnPreferenceClickListener(preference -> {
-            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_notifications);
+            ((MainActivity) getActivity()).openScreen(R.xml.preferences_notifications);
             return true;
         });
         findPreference(PREF_ABOUT).setOnPreferenceClickListener(
@@ -154,28 +154,28 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
         config.setBreadcrumbsEnabled(true);
 
         config.index(R.xml.preferences_user_interface)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_user_interface));
         config.index(R.xml.preferences_playback)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_playback));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_playback));
         config.index(R.xml.preferences_network)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_network));
         config.index(R.xml.preferences_storage)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_storage));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_storage));
         config.index(R.xml.preferences_import_export)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_storage))
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_import_export));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_storage))
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_import_export));
         config.index(R.xml.preferences_autodownload)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network))
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_network))
                 .addBreadcrumb(R.string.automation)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_autodownload));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_autodownload));
         config.index(R.xml.preferences_synchronization)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_synchronization));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_synchronization));
         config.index(R.xml.preferences_notifications)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_notifications));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_notifications));
         config.index(R.xml.feed_settings)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.feed_settings));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.feed_settings));
         config.index(R.xml.preferences_swipe)
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface))
-                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_swipe));
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_user_interface))
+                .addBreadcrumb(MainActivity.getTitleOfPage(R.xml.preferences_swipe));
     }
 }

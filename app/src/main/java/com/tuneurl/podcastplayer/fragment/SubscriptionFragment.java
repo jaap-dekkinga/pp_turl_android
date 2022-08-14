@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.dialog.ConfirmationDialog;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
@@ -55,7 +56,6 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.adapter.SubscriptionsRecyclerAdapter;
 import com.tuneurl.podcastplayer.dialog.FeedSortDialog;
 import com.tuneurl.podcastplayer.dialog.RemoveFeedDialog;
@@ -135,7 +135,7 @@ public class SubscriptionFragment extends Fragment
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
         toolbar.inflateMenu(R.menu.subscriptions);
         for (int i = 0; i < COLUMN_CHECKBOX_IDS.length; i++) {
             // Do this in Java to localize numbers

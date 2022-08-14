@@ -75,6 +75,7 @@ public class AllEpisodesFragment extends EpisodesListFragment {
     protected void onFragmentLoaded(List<FeedItem> episodes) {
         super.onFragmentLoaded(episodes);
 
+        /*
         if (feedItemFilter.getValues().length > 0) {
             txtvInformation.setText("{md-info-outline} " + this.getString(R.string.filtered_label));
             Iconify.addIcons(txtvInformation);
@@ -82,6 +83,8 @@ public class AllEpisodesFragment extends EpisodesListFragment {
         } else {
             txtvInformation.setVisibility(View.GONE);
         }
+
+         */
     }
 
     @Override

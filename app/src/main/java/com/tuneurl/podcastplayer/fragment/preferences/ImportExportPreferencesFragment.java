@@ -21,6 +21,7 @@ import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.export.ExportWriter;
 import com.tuneurl.podcastplayer.core.export.favorites.FavoritesWriter;
 import com.tuneurl.podcastplayer.core.export.html.HtmlWriter;
@@ -30,7 +31,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.tuneurl.podcastplayer.PodcastApp;
 import com.tuneurl.podcastplayer.R;
 import com.tuneurl.podcastplayer.activity.OpmlImportActivity;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
 import com.tuneurl.podcastplayer.asynctask.DocumentFileExportWorker;
 import com.tuneurl.podcastplayer.asynctask.ExportWorker;
 
@@ -86,7 +86,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.import_export_pref);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.import_export_pref);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(output ->
-                            showExportSuccessDialog(output.getUri().toString(), output.getUri(), exportType),
+                                    showExportSuccessDialog(output.getUri().toString(), output.getUri(), exportType),
                             this::showExportErrorDialog, progressDialog::dismiss);
         }
     }

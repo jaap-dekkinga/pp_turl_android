@@ -9,8 +9,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,22 +17,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bytehamster.lib.preferencesearch.SearchPreferenceResult;
+import com.bytehamster.lib.preferencesearch.SearchPreferenceResultListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.tuneurl.podcastplayer.adapter.NavListAdapter;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 import com.tuneurl.podcastplayer.core.receiver.MediaButtonReceiver;
 import com.tuneurl.podcastplayer.core.service.playback.PlaybackService;
@@ -44,18 +48,27 @@ import com.tuneurl.podcastplayer.fragment.AddFeedFragment;
 import com.tuneurl.podcastplayer.fragment.AudioPlayerFragment;
 import com.tuneurl.podcastplayer.fragment.CompletedDownloadsFragment;
 import com.tuneurl.podcastplayer.fragment.EpisodesFragment;
+import com.tuneurl.podcastplayer.fragment.FavoriteEpisodesFragment;
 import com.tuneurl.podcastplayer.fragment.FeedItemlistFragment;
 import com.tuneurl.podcastplayer.fragment.InboxFragment;
-import com.tuneurl.podcastplayer.fragment.NavDrawerFragment;
 import com.tuneurl.podcastplayer.fragment.PlaybackHistoryFragment;
 import com.tuneurl.podcastplayer.fragment.QueueFragment;
 import com.tuneurl.podcastplayer.fragment.SearchFragment;
 import com.tuneurl.podcastplayer.fragment.SubscriptionFragment;
 import com.tuneurl.podcastplayer.fragment.TransitionEffect;
+import com.tuneurl.podcastplayer.fragment.preferences.AutoDownloadPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.ImportExportPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.MainPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.NetworkPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.NotificationPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.PlaybackPreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.StoragePreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.SwipePreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.UserInterfacePreferencesFragment;
+import com.tuneurl.podcastplayer.fragment.preferences.synchronization.SynchronizationPreferencesFragment2;
 import com.tuneurl.podcastplayer.playback.cast.CastEnabledActivity;
 import com.tuneurl.podcastplayer.preferences.PreferenceUpgrader;
 import com.tuneurl.podcastplayer.ui.appstartintent.MainActivityStarter;
-import com.tuneurl.podcastplayer.ui.common.ThemeUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -67,13 +80,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import com.tuneurl.podcastplayer.R;
 
-import com.tuneurl.podcastplayer.dialog.RatingDialog;
 import com.tuneurl.podcastplayer.view.LockableBottomSheetBehavior;
 
 /**
  * The activity that is shown when the user launches the app.
  */
-public class MainActivity extends CastEnabledActivity {
+public class MainActivity extends CastEnabledActivity implements SearchPreferenceResultListener {
 
     private static final String TAG = "MainActivity";
     public static final String MAIN_FRAGMENT_TAG = "main";
@@ -91,11 +103,24 @@ public class MainActivity extends CastEnabledActivity {
 
     private @Nullable DrawerLayout drawerLayout;
     private @Nullable ActionBarDrawerToggle drawerToggle;
-    private View navDrawer;
+    
     private LockableBottomSheetBehavior sheetBehavior;
     private long lastBackButtonPressTime = 0;
     private RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     private int lastTheme = 0;
+
+
+    BottomNavigationView mBottomNavigationView;
+    private TextView fragmentTitle;
+
+    public void setSelectedFragmentTitle(String title){
+
+        fragmentTitle.setText(title);
+    }
+
+
+
+
 
     @NonNull
     public static Intent getIntentToOpenFeed(@NonNull Context context, long feedId) {
@@ -114,33 +139,65 @@ public class MainActivity extends CastEnabledActivity {
         }
         super.onCreate(savedInstanceState);
         StorageUtils.checkStorageAvailability(this);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_new);
+        fragmentTitle = findViewById(R.id.fragmentTitle);
         recycledViewPool.setMaxRecycledViews(R.id.view_type_episode_item, 25);
+        mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                if(item.getItemId() == R.id.action_favorite){
+
+                    loadFragment(FavoriteEpisodesFragment.TAG, null);
+                }
+                else if(item.getItemId() == R.id.action_search){
+
+                    loadFragment(AddFeedFragment.TAG, null);
+                }
+                else if(item.getItemId() == R.id.action_download){
+
+                    loadFragment(CompletedDownloadsFragment.TAG, null);
+                }
+                else if(item.getItemId() == R.id.action_bookmark){
+
+                    loadFragment(QueueFragment.TAG, null);
+                }
+                else if(item.getItemId() == R.id.action_settings){
+
+                    loadFragment(MainPreferencesFragment.TAG, null);
+                }
+                
+                return true;
+            }
+        });
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        navDrawer = findViewById(R.id.navDrawerFragment);
-        setNavDrawerSize();
 
         final FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(MAIN_FRAGMENT_TAG) == null) {
-            String lastFragment = NavDrawerFragment.getLastNavFragment(this);
-            if (ArrayUtils.contains(NavDrawerFragment.NAV_DRAWER_TAGS, lastFragment)) {
-                loadFragment(lastFragment, null);
-            } else {
+
+            String lastFragment = getLastNavFragment(this);
+            if (ArrayUtils.contains(NAV_DRAWER_TAGS, lastFragment)) {
+
+                setSelectedPanel(lastFragment);
+            }
+            else {
+
                 try {
+
                     loadFeedFragmentById(Integer.parseInt(lastFragment), null);
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     // it's not a number, this happens if we removed
                     // a label from the NAV_DRAWER_TAGS
                     // give them a nice default...
-                    loadFragment(QueueFragment.TAG, null);
+                    setSelectedPanel(FavoriteEpisodesFragment.TAG);
                 }
             }
         }
 
         FragmentTransaction transaction = fm.beginTransaction();
-        NavDrawerFragment navDrawerFragment = new NavDrawerFragment();
-        transaction.replace(R.id.navDrawerFragment, navDrawerFragment, NavDrawerFragment.TAG);
         AudioPlayerFragment audioPlayerFragment = new AudioPlayerFragment();
         transaction.replace(R.id.audioplayerFragment, audioPlayerFragment, AudioPlayerFragment.TAG);
         transaction.commit();
@@ -152,6 +209,23 @@ public class MainActivity extends CastEnabledActivity {
         sheetBehavior.setPeekHeight((int) getResources().getDimension(R.dimen.external_player_height));
         sheetBehavior.setHideable(false);
         sheetBehavior.setBottomSheetCallback(bottomSheetCallback);
+    }
+
+
+    private void setSelectedPanel(String lastFragment){
+
+        if(lastFragment.equals(FavoriteEpisodesFragment.TAG)){
+
+            mBottomNavigationView.setSelectedItemId(R.id.action_favorite);
+        }
+        else if(lastFragment.equals(AddFeedFragment.TAG)){
+
+            mBottomNavigationView.setSelectedItemId(R.id.action_search);
+        }
+        else if(lastFragment.equals(CompletedDownloadsFragment.TAG)){
+
+            mBottomNavigationView.setSelectedItemId(R.id.action_download);
+        }
     }
 
     /**
@@ -175,34 +249,35 @@ public class MainActivity extends CastEnabledActivity {
 
     private final BottomSheetBehavior.BottomSheetCallback bottomSheetCallback =
             new BottomSheetBehavior.BottomSheetCallback() {
-        @Override
-        public void onStateChanged(@NonNull View view, int state) {
-            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-                onSlide(view, 0.0f);
-            } else if (state == BottomSheetBehavior.STATE_EXPANDED) {
-                onSlide(view, 1.0f);
-            }
-        }
+                @Override
+                public void onStateChanged(@NonNull View view, int state) {
+                    if (state == BottomSheetBehavior.STATE_COLLAPSED) {
+                        onSlide(view, 0.0f);
+                    } else if (state == BottomSheetBehavior.STATE_EXPANDED) {
+                        onSlide(view, 1.0f);
+                    }
+                }
 
-        @Override
-        public void onSlide(@NonNull View view, float slideOffset) {
-            AudioPlayerFragment audioPlayer = (AudioPlayerFragment) getSupportFragmentManager()
-                    .findFragmentByTag(AudioPlayerFragment.TAG);
-            if (audioPlayer == null) {
-                return;
-            }
+                @Override
+                public void onSlide(@NonNull View view, float slideOffset) {
+                    AudioPlayerFragment audioPlayer = (AudioPlayerFragment) getSupportFragmentManager()
+                            .findFragmentByTag(AudioPlayerFragment.TAG);
+                    if (audioPlayer == null) {
+                        return;
+                    }
 
-            if (slideOffset == 0.0f) { //STATE_COLLAPSED
-                audioPlayer.scrollToPage(AudioPlayerFragment.POS_COVER);
-            }
+                    if (slideOffset == 0.0f) { //STATE_COLLAPSED
+                        audioPlayer.scrollToPage(AudioPlayerFragment.POS_COVER);
+                    }
 
-            float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
-            audioPlayer.getExternalPlayerHolder().setAlpha(1 - condensedSlideOffset);
-            audioPlayer.getExternalPlayerHolder().setVisibility(
-                    condensedSlideOffset > 0.99f ? View.GONE : View.VISIBLE);
-        }
-    };
+                    float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
+                    audioPlayer.getExternalPlayerHolder().setAlpha(1 - condensedSlideOffset);
+                    audioPlayer.getExternalPlayerHolder().setVisibility(
+                            condensedSlideOffset > 0.99f ? View.GONE : View.VISIBLE);
+                }
+            };
 
+    /*
     public void setupToolbarToggle(@NonNull Toolbar toolbar, boolean displayUpArrow) {
         if (drawerLayout != null) { // Tablet layout does not have a drawer
             if (drawerToggle != null) {
@@ -222,15 +297,15 @@ public class MainActivity extends CastEnabledActivity {
         }
     }
 
+     */
+
     private void checkFirstLaunch() {
+
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+
         if (prefs.getBoolean(PREF_IS_FIRST_LAUNCH, true)) {
-            loadFragment(AddFeedFragment.TAG, null);
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (drawerLayout != null) { // Tablet layout does not have a drawer
-                    drawerLayout.openDrawer(navDrawer);
-                }
-            }, 1500);
+
+            setSelectedPanel(AddFeedFragment.TAG);
 
             // for backward compatibility, we only change defaults for fresh installs
             UserPreferences.setUpdateInterval(12);
@@ -242,9 +317,6 @@ public class MainActivity extends CastEnabledActivity {
         }
     }
 
-    public boolean isDrawerOpen() {
-        return drawerLayout != null && navDrawer != null && drawerLayout.isDrawerOpen(navDrawer);
-    }
 
     public LockableBottomSheetBehavior getBottomSheet() {
         return sheetBehavior;
@@ -288,31 +360,47 @@ public class MainActivity extends CastEnabledActivity {
             case SubscriptionFragment.TAG:
                 fragment = new SubscriptionFragment();
                 break;
+            case FavoriteEpisodesFragment.TAG:
+                fragment = new FavoriteEpisodesFragment();
+                break;
+            case MainPreferencesFragment.TAG:
+                fragment = new MainPreferencesFragment();
+                break;
             default:
                 // default to the queue
+
                 fragment = new QueueFragment();
                 tag = QueueFragment.TAG;
                 args = null;
+
                 break;
         }
 
         if (args != null) {
             fragment.setArguments(args);
         }
-        NavDrawerFragment.saveLastNavFragment(this, tag);
+
+        saveLastNavFragment(this, tag);
+
         loadFragment(fragment);
     }
 
     public void loadFeedFragmentById(long feedId, Bundle args) {
+
         Fragment fragment = FeedItemlistFragment.newInstance(feedId);
+
         if (args != null) {
+
             fragment.setArguments(args);
         }
-        NavDrawerFragment.saveLastNavFragment(this, String.valueOf(feedId));
+
+        saveLastNavFragment(this, String.valueOf(feedId));
+
         loadFragment(fragment);
     }
 
     private void loadFragment(Fragment fragment) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         // clear back stack
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
@@ -328,10 +416,6 @@ public class MainActivity extends CastEnabledActivity {
         // not commit anything in an AsyncTask, but that's a bigger
         // change than we want now.
         t.commitAllowingStateLoss();
-
-        if (drawerLayout != null) { // Tablet layout does not have a drawer
-            drawerLayout.closeDrawer(navDrawer);
-        }
     }
 
     public void loadChildFragment(Fragment fragment, TransitionEffect transition) {
@@ -376,19 +460,8 @@ public class MainActivity extends CastEnabledActivity {
         if (drawerToggle != null) { // Tablet layout does not have a drawer
             drawerToggle.onConfigurationChanged(newConfig);
         }
-        setNavDrawerSize();
     }
 
-    private void setNavDrawerSize() {
-        if (drawerToggle == null) { // Tablet layout does not have a drawer
-            return;
-        }
-        float screenPercent = getResources().getInteger(R.integer.nav_drawer_screen_size_percent) * 0.01f;
-        int width = (int) (getScreenWidth() * screenPercent);
-        int maxWidth = (int) getResources().getDimension(R.dimen.nav_drawer_max_screen_size);
-
-        navDrawer.getLayoutParams().width = Math.min(width, maxWidth);
-    }
 
     private int getScreenWidth() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -398,6 +471,7 @@ public class MainActivity extends CastEnabledActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
         super.onRestoreInstanceState(savedInstanceState);
 
         if (getBottomSheet().getState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -409,7 +483,7 @@ public class MainActivity extends CastEnabledActivity {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        RatingDialog.init(this);
+        //RatingDialog.init(this);
     }
 
     @Override
@@ -417,7 +491,7 @@ public class MainActivity extends CastEnabledActivity {
         super.onResume();
         StorageUtils.checkStorageAvailability(this);
         handleNavIntent();
-        RatingDialog.check();
+        //RatingDialog.check();
 
         if (lastTheme != UserPreferences.getNoTitleTheme()) {
             finish();
@@ -466,42 +540,54 @@ public class MainActivity extends CastEnabledActivity {
 
     @Override
     public void onBackPressed() {
-        if (isDrawerOpen()) {
-            drawerLayout.closeDrawer(navDrawer);
-        } else if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+
+        if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
+        }
+        else if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
+
             super.onBackPressed();
-        } else {
+        }
+        else {
+
             switch (UserPreferences.getBackButtonBehavior()) {
-                case OPEN_DRAWER:
-                    if (drawerLayout != null) { // Tablet layout does not have drawer
-                        drawerLayout.openDrawer(navDrawer);
-                    }
-                    break;
+
                 case SHOW_PROMPT:
+
                     new AlertDialog.Builder(this)
-                        .setMessage(R.string.close_prompt)
-                        .setPositiveButton(R.string.yes, (dialogInterface, i) -> MainActivity.super.onBackPressed())
-                        .setNegativeButton(R.string.no, null)
-                        .setCancelable(false)
-                        .show();
+                            .setMessage(R.string.close_prompt)
+                            .setPositiveButton(R.string.yes, (dialogInterface, i) -> MainActivity.super.onBackPressed())
+                            .setNegativeButton(R.string.no, null)
+                            .setCancelable(false)
+                            .show();
                     break;
+
                 case DOUBLE_TAP:
+
                     if (lastBackButtonPressTime < System.currentTimeMillis() - 2000) {
+
                         Toast.makeText(this, R.string.double_tap_toast, Toast.LENGTH_SHORT).show();
                         lastBackButtonPressTime = System.currentTimeMillis();
-                    } else {
+                    }
+                    else {
+
                         super.onBackPressed();
                     }
                     break;
+
                 case GO_TO_PAGE:
-                    if (NavDrawerFragment.getLastNavFragment(this).equals(UserPreferences.getBackButtonGoToPage())) {
+
+                    if (getLastNavFragment(this).equals(UserPreferences.getBackButtonGoToPage())) {
+
                         super.onBackPressed();
-                    } else {
+                    }
+                    else {
+
                         loadFragment(UserPreferences.getBackButtonGoToPage(), null);
                     }
                     break;
+
                 default: super.onBackPressed();
             }
         }
@@ -628,7 +714,7 @@ public class MainActivity extends CastEnabledActivity {
                 break;
         }
     }
-  
+
     //Hardware keyboard support
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -681,5 +767,123 @@ public class MainActivity extends CastEnabledActivity {
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public void onSearchResultClicked(@NonNull SearchPreferenceResult result) {
+
+        int screen = result.getResourceFile();
+        if (screen == R.xml.feed_settings) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.feed_settings_label);
+            builder.setMessage(R.string.pref_feed_settings_dialog_msg);
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.show();
+        } else if (screen == R.xml.preferences_notifications) {
+            openScreen(screen);
+        } else {
+            PreferenceFragmentCompat fragment = openScreen(result.getResourceFile());
+            result.highlight(fragment);
+        }
+    }
+
+    public PreferenceFragmentCompat openScreen(int screen) {
+
+        PreferenceFragmentCompat fragment = getPreferenceScreen(screen);
+        if (screen == R.xml.preferences_notifications && Build.VERSION.SDK_INT >= 26) {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            startActivity(intent);
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_view, fragment)
+                    .addToBackStack(getString(getTitleOfPage(screen))).commit();
+        }
+
+
+        return fragment;
+    }
+
+    private PreferenceFragmentCompat getPreferenceScreen(int screen) {
+        PreferenceFragmentCompat prefFragment = null;
+
+        if (screen == R.xml.preferences_user_interface) {
+            prefFragment = new UserInterfacePreferencesFragment();
+        } else if (screen == R.xml.preferences_network) {
+            prefFragment = new NetworkPreferencesFragment();
+        } else if (screen == R.xml.preferences_storage) {
+            prefFragment = new StoragePreferencesFragment();
+        } else if (screen == R.xml.preferences_import_export) {
+            prefFragment = new ImportExportPreferencesFragment();
+        } else if (screen == R.xml.preferences_autodownload) {
+            prefFragment = new AutoDownloadPreferencesFragment();
+        } else if (screen == R.xml.preferences_synchronization) {
+            prefFragment = new SynchronizationPreferencesFragment2();
+        } else if (screen == R.xml.preferences_playback) {
+            prefFragment = new PlaybackPreferencesFragment();
+        } else if (screen == R.xml.preferences_notifications) {
+            prefFragment = new NotificationPreferencesFragment();
+        } else if (screen == R.xml.preferences_swipe) {
+            prefFragment = new SwipePreferencesFragment();
+        }
+        return prefFragment;
+    }
+
+    public static int getTitleOfPage(int preferences) {
+        if (preferences == R.xml.preferences_network) {
+            return R.string.network_pref;
+        } else if (preferences == R.xml.preferences_autodownload) {
+            return R.string.pref_automatic_download_title;
+        } else if (preferences == R.xml.preferences_playback) {
+            return R.string.playback_pref;
+        } else if (preferences == R.xml.preferences_storage) {
+            return R.string.storage_pref;
+        } else if (preferences == R.xml.preferences_import_export) {
+            return R.string.import_export_pref;
+        } else if (preferences == R.xml.preferences_user_interface) {
+            return R.string.user_interface_label;
+        } else if (preferences == R.xml.preferences_synchronization) {
+            return R.string.synchronization_pref;
+        } else if (preferences == R.xml.preferences_notifications) {
+            return R.string.notification_pref_fragment;
+        } else if (preferences == R.xml.feed_settings) {
+            return R.string.feed_settings_label;
+        } else if (preferences == R.xml.preferences_swipe) {
+            return R.string.swipeactions_label;
+        }
+        return R.string.settings_label;
+    }
+
+
+    public static final String PREF_LAST_FRAGMENT_TAG = "prefLastFragmentTag";
+    private static final String PREF_OPEN_FOLDERS = "prefOpenFolders";
+    public static final String[] NAV_DRAWER_TAGS = {
+            QueueFragment.TAG,
+            InboxFragment.TAG,
+            EpisodesFragment.TAG,
+            SubscriptionFragment.TAG,
+            CompletedDownloadsFragment.TAG,
+            PlaybackHistoryFragment.TAG,
+            AddFeedFragment.TAG,
+            NavListAdapter.SUBSCRIPTION_LIST_TAG
+    };
+
+    private static void saveLastNavFragment(Context context, String tag) {
+        Log.d(TAG, "saveLastNavFragment(tag: " + tag + ")");
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        if (tag != null) {
+            edit.putString(PREF_LAST_FRAGMENT_TAG, tag);
+        } else {
+            edit.remove(PREF_LAST_FRAGMENT_TAG);
+        }
+        edit.apply();
+    }
+
+    private static String getLastNavFragment(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String lastFragment = prefs.getString(PREF_LAST_FRAGMENT_TAG, QueueFragment.TAG);
+        Log.d(TAG, "getLastNavFragment() -> " + lastFragment);
+        return lastFragment;
     }
 }

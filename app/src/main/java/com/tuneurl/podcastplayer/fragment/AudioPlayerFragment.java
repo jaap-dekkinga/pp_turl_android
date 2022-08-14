@@ -22,6 +22,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.core.feed.util.PlaybackSpeedUtils;
 import com.tuneurl.podcastplayer.core.preferences.UserPreferences;
 import com.tuneurl.podcastplayer.core.service.playback.PlaybackService;
@@ -57,7 +58,6 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.PlaybackControlsDialog;
 import com.tuneurl.podcastplayer.dialog.SkipPreferenceDialog;
 import com.tuneurl.podcastplayer.dialog.SleepTimerDialog;
@@ -118,7 +118,7 @@ public class AudioPlayerFragment extends Fragment implements
 
         ExternalPlayerFragment externalPlayerFragment = new ExternalPlayerFragment();
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.playerFragment, externalPlayerFragment, ExternalPlayerFragment.TAG)
+                .replace(R.id.playerFragment, externalPlayerFragment, externalPlayerFragment.TAG)
                 .commit();
 
         butPlaybackSpeed = root.findViewById(R.id.butPlaybackSpeed);
@@ -268,15 +268,15 @@ public class AudioPlayerFragment extends Fragment implements
                 emitter.onComplete();
             }
         })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(media -> {
-            updateUi(media);
-            if (media.getChapters() == null && !includingChapters) {
-                loadMediaInfo(true);
-            }
-        }, error -> Log.e(TAG, Log.getStackTraceString(error)),
-            () -> updateUi(null));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(media -> {
+                            updateUi(media);
+                            if (media.getChapters() == null && !includingChapters) {
+                                loadMediaInfo(true);
+                            }
+                        }, error -> Log.e(TAG, Log.getStackTraceString(error)),
+                        () -> updateUi(null));
     }
 
     private PlaybackController newPlaybackController() {
@@ -433,7 +433,7 @@ public class AudioPlayerFragment extends Fragment implements
                     sbPosition.highlightCurrentChapter();
                 }
                 txtvSeek.setText(controller.getMedia().getChapters().get(newChapterIndex).getTitle()
-                                + "\n" + Converter.getDurationStringLong(position));
+                        + "\n" + Converter.getDurationStringLong(position));
             } else {
                 txtvSeek.setText(Converter.getDurationStringLong(position));
             }

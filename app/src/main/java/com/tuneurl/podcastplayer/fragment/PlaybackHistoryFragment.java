@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.tuneurl.podcastplayer.activity.MainActivity;
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 import com.tuneurl.podcastplayer.core.menuhandler.MenuItemUtils;
 import com.tuneurl.podcastplayer.core.storage.DBReader;
 import com.tuneurl.podcastplayer.core.storage.DBWriter;
@@ -21,8 +23,6 @@ import com.tuneurl.podcastplayer.event.playback.PlaybackHistoryEvent;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.MainActivity;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -62,7 +62,7 @@ public class PlaybackHistoryFragment extends EpisodesListFragment implements Too
         if (savedInstanceState != null) {
             displayUpArrow = savedInstanceState.getBoolean(KEY_UP_ARROW);
         }
-        ((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
+        //((MainActivity) getActivity()).setupToolbarToggle(toolbar, displayUpArrow);
         toolbar.inflateMenu(R.menu.playback_history);
         refreshToolbarState();
 

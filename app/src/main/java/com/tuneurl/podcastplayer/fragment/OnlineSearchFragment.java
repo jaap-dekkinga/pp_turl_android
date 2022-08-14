@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.tuneurl.podcastplayer.R;
 import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.activity.OnlineFeedViewActivity;
-import com.tuneurl.podcastplayer.adapter.itunes.ItunesAdapter;
+import com.tuneurl.podcastplayer.adapter.itunes.ItunesAdapter2;
 import com.tuneurl.podcastplayer.net.discovery.PodcastSearchResult;
 import com.tuneurl.podcastplayer.net.discovery.PodcastSearcher;
 import com.tuneurl.podcastplayer.net.discovery.PodcastSearcherRegistry;
@@ -42,7 +42,7 @@ public class OnlineSearchFragment extends Fragment {
     /**
      * Adapter responsible with the search results
      */
-    private ItunesAdapter adapter;
+    private ItunesAdapter2 adapter;
     private PodcastSearcher searchProvider;
     private GridView gridView;
     private ProgressBar progressBar;
@@ -97,7 +97,7 @@ public class OnlineSearchFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_itunes_search, container, false);
         root.findViewById(R.id.spinner_country).setVisibility(INVISIBLE);
         gridView = root.findViewById(R.id.gridView);
-        adapter = new ItunesAdapter(getActivity(), new ArrayList<>());
+        adapter = new ItunesAdapter2(getActivity(), new ArrayList<>());
         gridView.setAdapter(adapter);
 
         //Show information about the podcast when the list item is clicked
@@ -201,13 +201,13 @@ public class OnlineSearchFragment extends Fragment {
             txtvEmpty.setVisibility(searchResults.isEmpty() ? View.VISIBLE : View.GONE);
             txtvEmpty.setText(getString(R.string.no_results_for_query, query));
         }, error -> {
-                Log.e(TAG, Log.getStackTraceString(error));
-                progressBar.setVisibility(View.GONE);
-                txtvError.setText(error.toString());
-                txtvError.setVisibility(View.VISIBLE);
-                butRetry.setOnClickListener(v -> search(query));
-                butRetry.setVisibility(View.VISIBLE);
-            });
+            Log.e(TAG, Log.getStackTraceString(error));
+            progressBar.setVisibility(View.GONE);
+            txtvError.setText(error.toString());
+            txtvError.setVisibility(View.VISIBLE);
+            butRetry.setOnClickListener(v -> search(query));
+            butRetry.setVisibility(View.VISIBLE);
+        });
     }
 
     private void showOnlyProgressBar() {

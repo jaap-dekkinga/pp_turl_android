@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TuneURL_SDK</string>
+    <string name="listening_service_label">TuneURL service is running</string>
+</resources>

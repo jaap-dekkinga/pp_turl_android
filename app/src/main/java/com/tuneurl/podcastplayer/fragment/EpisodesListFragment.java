@@ -20,9 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
+import com.tuneurl.podcastplayer.adapter.SelectableAdapter;
 import com.tuneurl.podcastplayer.core.dialog.ConfirmationDialog;
 import com.tuneurl.podcastplayer.core.event.DownloadEvent;
 import com.tuneurl.podcastplayer.core.event.DownloaderUpdate;
@@ -40,11 +41,8 @@ import com.tuneurl.podcastplayer.fragment.actions.EpisodeMultiSelectActionHandle
 import com.tuneurl.podcastplayer.menuhandler.FeedItemMenuHandler;
 import com.tuneurl.podcastplayer.model.feed.FeedItem;
 import com.tuneurl.podcastplayer.ui.common.PagedToolbarFragment;
-import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
 import com.google.android.material.snackbar.Snackbar;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.tuneurl.podcastplayer.adapter.EpisodeItemListAdapter;
-import com.tuneurl.podcastplayer.adapter.SelectableAdapter;
 import com.tuneurl.podcastplayer.view.EpisodeItemListRecyclerView;
 
 import io.reactivex.Completable;
@@ -58,6 +56,8 @@ import java.util.List;
 import com.tuneurl.podcastplayer.R;
 import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.view.EmptyViewHandler;
+import com.tuneurl.podcastplayer.view.viewholder.EpisodeItemViewHolder;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -86,7 +86,6 @@ public abstract class EpisodesListFragment extends Fragment implements EpisodeIt
 
     private volatile boolean isUpdatingFeeds;
     protected Disposable disposable;
-    protected TextView txtvInformation;
 
     String getPrefName() {
         return TAG;
@@ -182,7 +181,6 @@ public abstract class EpisodesListFragment extends Fragment implements EpisodeIt
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View root = inflater.inflate(R.layout.all_episodes_fragment, container, false);
-        txtvInformation = root.findViewById(R.id.txtvInformation);
 
         recyclerView = root.findViewById(android.R.id.list);
         recyclerView.setRecycledViewPool(((MainActivity) getActivity()).getRecycledViewPool());
@@ -305,20 +303,20 @@ public abstract class EpisodesListFragment extends Fragment implements EpisodeIt
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(data -> {
-                    if (data.size() < EPISODES_PER_PAGE) {
-                        hasMoreItems = false;
-                    }
-                    episodes.addAll(data);
-                    onFragmentLoaded(episodes);
-                    if (listAdapter.shouldSelectLazyLoadedItems()) {
-                        listAdapter.setSelected(episodes.size() - data.size(), episodes.size(), true);
-                    }
-                }, error -> Log.e(TAG, Log.getStackTraceString(error)),
-                    () -> {
-                        recyclerView.post(() -> isLoadingMore = false); // Make sure to not always load 2 pages at once
-                        progLoading.setVisibility(View.GONE);
-                        loadingMoreView.setVisibility(View.GONE);
-                    });
+                            if (data.size() < EPISODES_PER_PAGE) {
+                                hasMoreItems = false;
+                            }
+                            episodes.addAll(data);
+                            onFragmentLoaded(episodes);
+                            if (listAdapter.shouldSelectLazyLoadedItems()) {
+                                listAdapter.setSelected(episodes.size() - data.size(), episodes.size(), true);
+                            }
+                        }, error -> Log.e(TAG, Log.getStackTraceString(error)),
+                        () -> {
+                            recyclerView.post(() -> isLoadingMore = false); // Make sure to not always load 2 pages at once
+                            progLoading.setVisibility(View.GONE);
+                            loadingMoreView.setVisibility(View.GONE);
+                        });
     }
 
     protected void onFragmentLoaded(List<FeedItem> episodes) {

@@ -415,14 +415,14 @@ public class ItemFragment extends Fragment {
             progbarLoading.setVisibility(View.VISIBLE);
         }
         disposable = Observable.fromCallable(this::loadInBackground)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(result -> {
-                progbarLoading.setVisibility(View.GONE);
-                item = result;
-                onFragmentLoaded();
-                itemsLoaded = true;
-            }, error -> Log.e(TAG, Log.getStackTraceString(error)));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    progbarLoading.setVisibility(View.GONE);
+                    item = result;
+                    onFragmentLoaded();
+                    itemsLoaded = true;
+                }, error -> Log.e(TAG, Log.getStackTraceString(error)));
     }
 
     @Nullable
