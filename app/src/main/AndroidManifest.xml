@@ -45,7 +45,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
         <activity
-            android:name=".activity.TuneURLActivity"
+            android:name="com.dekidea.tuneurl.activity.TuneURLActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PlaybackSpeedDialogActivity"

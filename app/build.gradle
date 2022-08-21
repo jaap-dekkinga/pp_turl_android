@@ -146,6 +146,9 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$runnerVersion"
     androidTestImplementation "androidx.test:rules:$rulesVersion"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
 
 if (project.hasProperty("antennaPodPlayPublisherCredentials")) {

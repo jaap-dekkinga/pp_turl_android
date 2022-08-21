@@ -42,6 +42,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.preference.PreferenceManager;
 
+import com.dekidea.tuneurl.receiver.TuneURLReceiver;
+import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.tuneurl.podcastplayer.event.MessageEvent;
 import com.tuneurl.podcastplayer.event.PlayerErrorEvent;
@@ -103,7 +105,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Controls the MediaPlayer that plays a FeedMedia-file
  */
-public class PlaybackService extends MediaBrowserServiceCompat {
+public class PlaybackService extends MediaBrowserServiceCompat implements Constants {
     /**
      * Logging tag
      */
@@ -202,6 +204,8 @@ public class PlaybackService extends MediaBrowserServiceCompat {
 
     private static volatile MediaType currentMediaType = MediaType.UNKNOWN;
 
+    private TuneURLReceiver tuneURLReceiver;
+
     private final IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
@@ -265,6 +269,11 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         registerReceiver(audioBecomingNoisy, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         registerReceiver(skipCurrentEpisodeReceiver, new IntentFilter(ACTION_SKIP_CURRENT_EPISODE));
         registerReceiver(pausePlayCurrentEpisodeReceiver, new IntentFilter(ACTION_PAUSE_PLAY_CURRENT_EPISODE));
+
+
+        registerTuneURLReceiver();
+
+
         EventBus.getDefault().register(this);
         taskManager = new PlaybackServiceTaskManager(this, taskManagerCallback);
 
@@ -351,6 +360,9 @@ public class PlaybackService extends MediaBrowserServiceCompat {
         unregisterReceiver(audioBecomingNoisy);
         unregisterReceiver(skipCurrentEpisodeReceiver);
         unregisterReceiver(pausePlayCurrentEpisodeReceiver);
+
+        unregisterReceiver(tuneURLReceiver);
+
         mediaPlayer.shutdown();
         taskManager.shutdown();
     }
@@ -895,9 +907,21 @@ public class PlaybackService extends MediaBrowserServiceCompat {
             playable.onPlaybackStart();
             taskManager.startPositionSaver();
 
-            TuneURLManager.startScanning(getApplicationContext(),
-                    playable.getLocalMediaUrl(),
-                    (long)mediaPlayer.getPosition() * 1000L);
+            try {
+
+                String mediaUrl = playable.getLocalMediaUrl();
+                if (mediaUrl == null) {
+
+                    mediaUrl = playable.getStreamUrl();
+                }
+                TuneURLManager.startScanning(getApplicationContext(),
+                        mediaUrl,
+                        (long) mediaPlayer.getPosition() * 1000L);
+            }
+            catch (Exception e){
+
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -1909,4 +1933,20 @@ public class PlaybackService extends MediaBrowserServiceCompat {
                     updateNotificationAndMediaSession(getPlayable());
                 }
             };
+
+
+    private void registerTuneURLReceiver(){
+
+        tuneURLReceiver = new TuneURLReceiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(SEARCH_FINGERPRINT_RESULT_RECEIVED);
+        intentFilter.addAction(SEARCH_FINGERPRINT_RESULT_ERROR);
+        intentFilter.addAction(ADD_RECORD_OF_INTEREST_RESULT_RECEIVED);
+        intentFilter.addAction(ADD_RECORD_OF_INTEREST_RESULT_ERROR);
+        intentFilter.addAction(POST_POLL_ANSWER_RESULT_RECEIVED);
+        intentFilter.addAction(POST_POLL_ANSWER_RESULT_ERROR);
+
+        registerReceiver(tuneURLReceiver, intentFilter);
+    }
 }

@@ -22,7 +22,8 @@
             android:name="com.dekidea.tuneurl.service.TuneURLService"
             android:exported="true"/>
 
-        <service android:name="com.dekidea.tuneurl.service.APIService" />
+        <service android:name="com.dekidea.tuneurl.service.APIService"
+            android:exported="true"/>
 
     </application>
 

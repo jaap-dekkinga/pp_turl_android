@@ -97,9 +97,7 @@ public class SplashActivity extends AppCompatActivity {
 
             input_stream = context.getApplicationContext().getResources().openRawResource(raw_resource);
 
-            File output_folder = context.getFilesDir();
-
-            String file_path = output_folder.getAbsolutePath() + "/" + file_name;
+            String file_path = getExternalFilesDir(null).getPath() + "/" + file_name;
 
             boolean success =  writeFile(input_stream, file_path);
 

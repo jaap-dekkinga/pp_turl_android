@@ -1,6 +1,7 @@
 package com.dekidea.tuneurl.util;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -21,6 +22,7 @@ public class JsonUtils implements Constants{
             buffer.add("data", data);
 
             fingerprint.add("fingerprint", buffer);
+            fingerprint.addProperty("fingerprint_version", "1");
         }
         catch (Exception e){
 

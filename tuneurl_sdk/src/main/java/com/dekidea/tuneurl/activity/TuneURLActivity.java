@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.activity;
+package com.dekidea.tuneurl.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -9,17 +9,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.dekidea.tuneurl.R;
 import com.dekidea.tuneurl.api.APIData;
 import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
-import com.tuneurl.podcastplayer.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TuneURLActivity extends AppCompatActivity implements Constants {
+
+    private static final long DEFAULT_CLOSE_INTERVAL = 10000L;
 
     private APIData apiData;
 
@@ -28,8 +34,11 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
         super.onCreate(savedInstanceState);
 
-        setShowWhenLocked(true);
-        setTurnScreenOn(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }
+
         KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
         keyguardManager.requestDismissKeyguard(this, null);
 
@@ -57,6 +66,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
     public void onResume() {
 
         super.onResume();
+
+        scheduleDefaultClose();
     }
 
 
@@ -69,7 +80,13 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
             String name = apiData.getName();
             String info = apiData.getInfo();
 
+            System.out.println("type = " + type);
+            System.out.println("name = " + name);
+            System.out.println("description = " + description);
+            System.out.println("info = " + info);
+
             TextView title = findViewById(R.id.title);
+            title.setText(info);
             TextView details = findViewById(R.id.details);
             TextView button_open = findViewById(R.id.button_open);
             TextView button_ignore = findViewById(R.id.button_ignore);
@@ -136,6 +153,12 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
                         callPhone(apiData);
                     }
+                    else if (ACTION_COUPON.equals(action)) {
+
+                        TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
+
+                        openPage( apiData);
+                    }
                     else {
 
                         //TuneURLManager.startScanning(this);
@@ -157,6 +180,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
         try{
 
             String url = data.getInfo();
+
+            System.out.println("openPage: " + url);
 
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -216,5 +241,26 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
             e.printStackTrace();
         }
+    }
+
+
+    private void scheduleDefaultClose(){
+
+        TimerTask timerTask = new TimerTask() {
+
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        doAction("no", apiData);
+                    }
+                });
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(timerTask, DEFAULT_CLOSE_INTERVAL);
     }
 }

@@ -24,8 +24,11 @@ import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.dekidea.tuneurl.util.WakeLocker;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -34,6 +37,8 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import be.tarsos.dsp.AudioDispatcher;
+import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import okhttp3.Cache;
 
 
@@ -47,7 +52,7 @@ public class TuneURLService extends Service implements Constants {
 	private static final int FINGERPRINT_SAMPLE_RATE = 10240;
 	private static final int TRIGGER_SIZE_MILLIS = 1400;
 	private static final int TUNE_URL_SIZE_MILLIS = 3500;
-	private static final int FINGERPRINT_TRIGGER_BUFFER_SIZE = (int)((double)FINGERPRINT_SAMPLE_RATE * ((double)FINGERPRINT_BPS / 8d) * ((double)TRIGGER_SIZE_MILLIS / 1000d));
+	private static final int FINGERPRINT_TRIGGER_BUFFER_SIZE = (int)(2 * (double)FINGERPRINT_SAMPLE_RATE * ((double)FINGERPRINT_BPS / 8d) * ((double)TRIGGER_SIZE_MILLIS / 1000d));
 
 	private Context mContext;
 
@@ -94,6 +99,8 @@ public class TuneURLService extends Service implements Constants {
 
 
 	private void initializeResources(){
+
+		System.out.println("initializeResources()");
 
 		InputStream inputStream = null;
 		ReadableByteChannel channel = null;
@@ -248,11 +255,6 @@ public class TuneURLService extends Service implements Constants {
 					String path = intent.getStringExtra("path");
 					long positionUs = intent.getLongExtra("positionUs", 0);
 
-					System.out.println("path = " + path);
-					System.out.println("positionUs = " + positionUs);
-
-					//path = "/storage/emulated/0/Android/data/com.tuneurl.podcastplayer.debug/files/media/TuneURL technology interactive audio/Phone example.mp3";
-
 					startListening(path, positionUs);
 				}
 				else if(action == ACTION_STOP_SCANNING){
@@ -290,67 +292,65 @@ public class TuneURLService extends Service implements Constants {
 
 	public void initializeMediaExtractor(String path, long positionUs){
 
-		this.mediaExtractor = new MediaExtractor();
+		if(path != null) {
 
-		try {
+			try {
 
-			this.mediaExtractor.setDataSource(path);
+				this.mediaExtractor = new MediaExtractor();
 
-			boolean isAudioTrackFound = false;
+				this.mediaExtractor.setDataSource(path);
 
-			for (int i = 0; !isAudioTrackFound && i < this.mediaExtractor.getTrackCount(); i++) {
+				boolean isAudioTrackFound = false;
 
-				MediaFormat format = this.mediaExtractor.getTrackFormat(i);
-				String mime = format.getString(MediaFormat.KEY_MIME);
+				for (int i = 0; !isAudioTrackFound && i < this.mediaExtractor.getTrackCount(); i++) {
 
-				System.out.println(format.toString());
+					MediaFormat format = this.mediaExtractor.getTrackFormat(i);
+					String mime = format.getString(MediaFormat.KEY_MIME);
 
-				if (mime.startsWith("audio/")) {
+					if (mime.startsWith("audio/")) {
 
-					isAudioTrackFound = true;
+						isAudioTrackFound = true;
 
-					try{
+						try {
 
-						sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
-					}
-					catch (Exception e){
+							sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+						} catch (Exception e) {
 
-						e.printStackTrace();
-					}
+							e.printStackTrace();
+						}
 
-					try{
+						try {
 
-						numChannels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-					}
-					catch (Exception e){
+							numChannels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+						} catch (Exception e) {
 
-						e.printStackTrace();
-					}
+							e.printStackTrace();
+						}
 
-					System.out.println("numChannels =" + numChannels);
+						System.out.println("numChannels =" + numChannels);
 
-					initializeBuffers(sampleRate, numChannels);
+						initializeBuffers(sampleRate, numChannels);
 
-					this.mediaExtractor.selectTrack(i);
+						this.mediaExtractor.selectTrack(i);
 
-					if (this.mediaCodec == null) {
+						if (this.mediaCodec == null) {
 
-						this.mediaCodec = MediaCodec.createDecoderByType(mime);
-						this.mediaCodec.configure(format, null, null, 0);
+							this.mediaCodec = MediaCodec.createDecoderByType(mime);
+							this.mediaCodec.configure(format, null, null, 0);
 
-						this.mediaCodec.start();
+							this.mediaCodec.start();
+						}
 					}
 				}
+
+				if (positionUs > 0) {
+
+					this.mediaExtractor.seekTo(positionUs, MediaExtractor.SEEK_TO_PREVIOUS_SYNC);
+				}
+			} catch (Exception e) {
+
+				e.printStackTrace();
 			}
-
-			if(positionUs > 0){
-
-				this.mediaExtractor.seekTo(positionUs, MediaExtractor.SEEK_TO_PREVIOUS_SYNC);
-			}
-		}
-		catch (Exception e){
-
-			e.printStackTrace();
 		}
 	}
 
@@ -369,7 +369,7 @@ public class TuneURLService extends Service implements Constants {
 		tuneUrlByteBuffer = ByteBuffer.allocateDirect(tuneUrlByteBufferSize);
 		tuneUrlByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-		int resampledTuneUrlByteBufferSize = (int)((double)FINGERPRINT_SAMPLE_RATE * ((double)CHANNEL_BPS / 8d) * ((double)TUNE_URL_SIZE_MILLIS / 1000d));
+		int resampledTuneUrlByteBufferSize = (int)((double)FINGERPRINT_SAMPLE_RATE * ((double)CHANNEL_BPS / 8d) * 2 * ((double)TUNE_URL_SIZE_MILLIS / 1000d));
 		tuneUrlWaveLenght = (int)((double)resampledTuneUrlByteBufferSize / 2d);
 		resampledTuneUrlByteBuffer = ByteBuffer.allocateDirect(resampledTuneUrlByteBufferSize);
 		resampledTuneUrlByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -424,83 +424,84 @@ public class TuneURLService extends Service implements Constants {
 			initializeMediaExtractor(path, positionUs);
 		}
 
-		long startTime = Calendar.getInstance().getTimeInMillis();
-		long startPlayTime = (long)((double)mediaExtractor.getSampleTime() / 1000d);
+		if(mediaExtractor != null) {
 
-		while (isPlaying) {
+			long startTime = Calendar.getInstance().getTimeInMillis();
+			long startPlayTime = (long) ((double) mediaExtractor.getSampleTime() / 1000d);
 
-			MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+			while (isPlaying) {
 
-			int inIndex = mediaCodec.dequeueInputBuffer(TIMEOUT_US);
+				MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 
-			if (inIndex >= 0) {
+				int inIndex = mediaCodec.dequeueInputBuffer(TIMEOUT_US);
 
-				ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inIndex);
+				if (inIndex >= 0) {
 
-				int sampleSize = mediaExtractor.readSampleData(inputBuffer, 0);
+					ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inIndex);
 
-				if (sampleSize < 0) {
+					int sampleSize = mediaExtractor.readSampleData(inputBuffer, 0);
 
-					mediaCodec.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+					if (sampleSize < 0) {
+
+						mediaCodec.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+					} else {
+
+						mediaCodec.queueInputBuffer(inIndex, 0, sampleSize, mediaExtractor.getSampleTime(), 0);
+					}
+
+					if (sampleSize >= 0) {
+
+						int outIndex = mediaCodec.dequeueOutputBuffer(info, TIMEOUT_US);
+
+						switch (outIndex) {
+
+							case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
+
+								System.out.println("INFO_OUTPUT_FORMAT_CHANGED");
+
+								break;
+
+							case MediaCodec.INFO_TRY_AGAIN_LATER:
+
+								System.out.println("INFO_TRY_AGAIN_LATER");
+
+								break;
+
+							default:
+
+								ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outIndex);
+
+								writeToBuffer(outputBuffer);
+
+								mediaCodec.releaseOutputBuffer(outIndex, false);
+
+								mediaExtractor.advance();
+
+								break;
+						}
+					}
 				}
-				else {
 
-					mediaCodec.queueInputBuffer(inIndex, 0, sampleSize, mediaExtractor.getSampleTime(), 0);
-				}
+				long currentTime = Calendar.getInstance().getTimeInMillis();
+				long currentPlayTime = (long) ((double) mediaExtractor.getSampleTime() / 1000d);
 
-				if(sampleSize >= 0) {
+				long timeSpent = currentTime - startTime;
+				long timePlaySpent = currentPlayTime - startPlayTime;
 
-					int outIndex = mediaCodec.dequeueOutputBuffer(info, TIMEOUT_US);
+				if (!recordTuneUrl && timePlaySpent > (timeSpent + 1000)) {
 
-					switch (outIndex) {
+					try {
 
-						case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
+						Thread.sleep(timePlaySpent - timeSpent);
+					} catch (Exception e) {
 
-							System.out.println("INFO_OUTPUT_FORMAT_CHANGED");
-
-							break;
-
-						case MediaCodec.INFO_TRY_AGAIN_LATER:
-
-							System.out.println("INFO_TRY_AGAIN_LATER");
-
-							break;
-
-						default:
-
-							ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outIndex);
-
-							writeToBuffer(outputBuffer);
-
-							mediaCodec.releaseOutputBuffer(outIndex, false);
-
-							mediaExtractor.advance();
-
-							break;
+						e.printStackTrace();
 					}
 				}
 			}
 
-			long currentTime = Calendar.getInstance().getTimeInMillis();
-			long currentPlayTime = (long)((double)mediaExtractor.getSampleTime() / 1000d);
-
-			long timeSpent = currentTime - startTime;
-			long timePlaySpent = currentPlayTime - startPlayTime;
-
-			if(!recordTuneUrl && timePlaySpent > (timeSpent + 1000)){
-
-				try{
-
-					Thread.sleep(timePlaySpent - timeSpent);
-				}
-				catch (Exception e){
-
-					e.printStackTrace();
-				}
-			}
+			releaseMediaExtractor();
 		}
-
-		releaseMediaExtractor();
 	}
 
 
@@ -518,6 +519,13 @@ public class TuneURLService extends Service implements Constants {
 				}
 				else {
 
+					int remaining = tuneUrlByteBuffer.remaining();
+
+					for(int i=0; i<remaining; i++){
+
+						tuneUrlByteBuffer.put(outputBuffer.get(i));
+					}
+
 					searchTuneUrlFingerprint();
 				}
 			}
@@ -528,6 +536,13 @@ public class TuneURLService extends Service implements Constants {
 					triggerByteBuffer.put(outputBuffer);
 				}
 				else {
+
+					int remaining = triggerByteBuffer.remaining();
+
+					for(int i=0; i<remaining; i++){
+
+						triggerByteBuffer.put(outputBuffer.get(i));
+					}
 
 					checkTriggerFingerprint();
 				}
@@ -545,6 +560,13 @@ public class TuneURLService extends Service implements Constants {
 				}
 				else {
 
+					int remaining = tuneUrlByteBuffer.remaining();
+
+					for(int i=0; i<remaining; i++){
+
+						tuneUrlByteBuffer.put(stereo[i]);
+					}
+
 					searchTuneUrlFingerprint();
 				}
 			}
@@ -555,6 +577,13 @@ public class TuneURLService extends Service implements Constants {
 					triggerByteBuffer.put(stereo);
 				}
 				else {
+
+					int remaining = triggerByteBuffer.remaining();
+
+					for(int i=0; i<remaining; i++){
+
+						triggerByteBuffer.put(stereo[i]);
+					}
 
 					checkTriggerFingerprint();
 				}
@@ -615,16 +644,20 @@ public class TuneURLService extends Service implements Constants {
 
 		System.out.println("TuneURLService.checkTriggerFingerprint()");
 
+		Resample resample = null;
+
 		try {
 
-			Resample resample = new Resample();
-			resample.create(sampleRate, FINGERPRINT_SAMPLE_RATE, 2048, 1);
+			triggerByteBuffer.rewind();
+			referenceTriggerByteBuffer.rewind();
+			resampledTriggerByteBuffer.clear();
 
-			int output_len = resample.resample(triggerByteBuffer, resampledTriggerByteBuffer, resampledTriggerByteBuffer.remaining());
+			resample = new Resample();
+			resample.create(sampleRate, FINGERPRINT_SAMPLE_RATE, 2048, 1);			
+			
+			int output_len = resample.resampleEx(triggerByteBuffer, resampledTriggerByteBuffer, triggerByteBuffer.remaining());
 
 			if(output_len > 0) {
-
-				resampledTriggerByteBuffer.rewind();
 
 				mSimilarity = getSimilarity(referenceTriggerByteBuffer, FINGERPRINT_TRIGGER_BUFFER_SIZE / 2, resampledTriggerByteBuffer, FINGERPRINT_TRIGGER_BUFFER_SIZE / 2);
 
@@ -635,21 +668,33 @@ public class TuneURLService extends Service implements Constants {
 					recordTuneUrl = true;
 				}
 			}
-
-			resample.destroy();
 		}
 		catch (Exception e) {
 
 			e.printStackTrace();
 		}
+		finally {
 
-		triggerByteBuffer.rewind();
-		triggerByteBuffer.clear();
-		triggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+			if(resample != null){
 
-		referenceTriggerByteBuffer.rewind();
-		referenceTriggerByteBuffer.clear();
-		referenceTriggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+				try {
+
+					resample.destroy();
+				}
+				catch (Exception e){
+
+					e.printStackTrace();
+				}
+			}
+		}
+		try {
+
+			triggerByteBuffer.clear();
+		}
+		catch (Exception e){
+
+			e.printStackTrace();
+		}
 	}
 
 
@@ -659,36 +704,121 @@ public class TuneURLService extends Service implements Constants {
 
 		recordTuneUrl = false;
 
+		Resample resample = null;
+
 		try {
 
-			Resample resample = new Resample();
-			resample.create(sampleRate, FINGERPRINT_SAMPLE_RATE, 2048, 1);
+			tuneUrlByteBuffer.rewind();
+			resampledTuneUrlByteBuffer.clear();
 
-			int output_len = resample.resample(tuneUrlByteBuffer, resampledTuneUrlByteBuffer, resampledTuneUrlByteBuffer.remaining());
+			resample = new Resample();
+			resample.create(sampleRate, FINGERPRINT_SAMPLE_RATE, 2048, 1);
+			
+			int output_len = resample.resampleEx(tuneUrlByteBuffer, resampledTuneUrlByteBuffer, tuneUrlByteBuffer.remaining());
 
 			if(output_len > 0) {
 
-				String fingerprint_string = extractFingerprintFromByteBuffer(resampledTuneUrlByteBuffer, tuneUrlWaveLenght);
+				byte[] monoAudio = convertToMono(resampledTuneUrlByteBuffer);
 
-				System.out.println("fingerprint_string = " + fingerprint_string);
+				if(monoAudio != null) {
 
-				searchFingerprint(fingerprint_string);
+					ByteBuffer byteBuffer = ByteBuffer.allocateDirect(monoAudio.length);
+					byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+					byteBuffer.put(monoAudio);
+					byteBuffer.rewind();
+
+					String fingerprint_string = extractFingerprintFromByteBuffer(byteBuffer, (int) ((double) monoAudio.length / 2d));
+
+					byteBuffer.clear();
+
+					byteBuffer = null;
+
+					monoAudio = null;
+
+					try {
+
+						System.out.println("fingerprint_string_1 = " + fingerprint_string.substring(0, 3500));
+						System.out.println("fingerprint_string_2 = " + fingerprint_string.substring(3500));
+					}
+					catch (Exception e) {
+
+						e.printStackTrace();
+					}
+
+					searchFingerprint(fingerprint_string);
+				}
+			}
+		}
+		catch (Exception e){
+
+			e.printStackTrace();
+		}
+		finally {
+
+			if(resample != null){
+
+				try {
+
+					resample.destroy();
+				}
+				catch (Exception e){
+
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+
+			tuneUrlByteBuffer.clear();
+		}
+		catch (Exception e){
+
+			e.printStackTrace();
+		}
+	}
+
+
+	private byte[] convertToMono(ByteBuffer byteBuffer){
+
+		byte[] result = null;
+		byte[] original = null;
+
+		try {
+
+			byteBuffer.rewind();
+
+			original = new byte[byteBuffer.remaining()];
+
+			byteBuffer.get(original);
+
+			int resultLenght = (int) ((double) original.length / 2d);
+
+			if ( (resultLenght & 1) != 0 ){
+
+				resultLenght = resultLenght - 1;
 			}
 
-			resample.destroy();
+			result = new byte[resultLenght];
+
+			int dstIndex = 0;
+
+			for (int i = 0; i < resultLenght; i = i + 2) {
+
+				result[i] = original[dstIndex];
+				result[i + 1] = original[dstIndex + 1];
+
+				dstIndex = dstIndex + 4;
+			}
 		}
 		catch (Exception e){
 
 			e.printStackTrace();
 		}
 
-		tuneUrlByteBuffer.rewind();
-		tuneUrlByteBuffer.clear();
-		tuneUrlByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		original = null;
 
-		resampledTuneUrlByteBuffer.rewind();
-		resampledTuneUrlByteBuffer.clear();
-		resampledTuneUrlByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		return result;
 	}
 
 
@@ -735,4 +865,71 @@ public class TuneURLService extends Service implements Constants {
 	public native byte[] extractFingerprint(ByteBuffer byteBuffer, int waveLength);
 
 	public native float getSimilarity(ByteBuffer byteBuffer1, int waveLength1, ByteBuffer byteBuffer2, int waveLength2);
+
+
+
+
+
+	//Code for checking what is analysed
+
+	private OutputStream rawAudioDataOutputStream;
+
+	public void initializeRawAudioDataRecording(String rawFilePath){
+
+		try{
+
+			File file = new File(rawFilePath);
+
+			rawAudioDataOutputStream = new FileOutputStream(file);
+		}
+		catch (Exception e) {
+
+			e.printStackTrace();
+		}
+	}
+
+
+	private void writeToFile(byte[] content) {
+
+		if (rawAudioDataOutputStream != null &&
+				content != null &&
+				content.length > 0) {
+
+			try {
+
+				rawAudioDataOutputStream.write(content);
+			}
+			catch(Exception e){
+
+				e.printStackTrace();
+			}
+		}
+	}
+
+
+	private void releaseAudioOutputStream(){
+
+		if (rawAudioDataOutputStream != null) {
+
+			try {
+
+				rawAudioDataOutputStream.flush();
+			}
+			catch(Exception e){
+
+				e.printStackTrace();
+			}
+
+			try {
+
+				rawAudioDataOutputStream.close();
+			}
+			catch(Exception e){
+
+				e.printStackTrace();
+			}
+
+			rawAudioDataOutputStream = null;
+		}
+	}
 }

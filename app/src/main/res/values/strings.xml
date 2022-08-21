@@ -49,6 +49,5 @@
         <item quantity="other">%d episodes removed from Bookmarks.</item>
     </plurals>
 
-    <string name="open">Open</string>
-    <string name="ignore">Ignore</string>
+
 </resources>
