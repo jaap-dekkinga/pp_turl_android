@@ -29,6 +29,7 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
     private APIData apiData;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -71,6 +72,13 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
     }
 
 
+    @Override
+    public void onPause() {
+
+        super.onPause();
+    }
+
+
     public void showTuneURLOptions(final APIData apiData) {
 
         try {
@@ -88,6 +96,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
             TextView title = findViewById(R.id.title);
             title.setText(info);
             TextView details = findViewById(R.id.details);
+            details.setText(description);
+
             TextView button_open = findViewById(R.id.button_open);
             TextView button_ignore = findViewById(R.id.button_ignore);
 

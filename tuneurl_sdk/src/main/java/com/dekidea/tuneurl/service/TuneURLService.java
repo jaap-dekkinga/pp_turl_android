@@ -20,15 +20,13 @@ import androidx.core.app.NotificationCompat;
 
 import com.asha.libresample2.Resample;
 import com.dekidea.tuneurl.R;
+import com.dekidea.tuneurl.activity.TuneURLActivity;
 import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.dekidea.tuneurl.util.WakeLocker;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -37,16 +35,13 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.io.android.AudioDispatcherFactory;
-import okhttp3.Cache;
-
 
 public class TuneURLService extends Service implements Constants {
 
 	private static final int NOTIFICATION_ID = 1521;
 	private static final long TIMEOUT_US = 100000L;
-	private static final float SIMILARITY_THRESHOLD = 0.5f;
+	private static final float SIMILARITY_THRESHOLD = 0.98f;
+	private static final int SCANNING_PERIOD_IN_FRAMES = 5;
 	private static final int CHANNEL_BPS = 16;
 	private static final int FINGERPRINT_BPS = 16;
 	private static final int FINGERPRINT_SAMPLE_RATE = 10240;
@@ -58,6 +53,7 @@ public class TuneURLService extends Service implements Constants {
 
 	private ByteBuffer referenceTriggerByteBuffer = null;
 
+	private byte[] windowByteArray = null;
 	private ByteBuffer triggerByteBuffer = null;
 	private ByteBuffer tuneUrlByteBuffer = null;
 
@@ -81,6 +77,12 @@ public class TuneURLService extends Service implements Constants {
 
 	private ExecutorService mExecutorService;
 
+	private boolean startCheckingTrigger = false;
+	private int start_position_write = 0;
+	private int start_position_read = 0;
+	private int frameCounter = 0;
+	private long lastSearchTime = 0;
+
 	static {
 
 		System.loadLibrary("native-lib");
@@ -97,10 +99,11 @@ public class TuneURLService extends Service implements Constants {
 		initializeResources();
 	}
 
+	byte[] referenceTriggerArray;
 
 	private void initializeResources(){
 
-		System.out.println("initializeResources()");
+		System.out.println("TuneURLService.initializeResources()");
 
 		InputStream inputStream = null;
 		ReadableByteChannel channel = null;
@@ -117,6 +120,10 @@ public class TuneURLService extends Service implements Constants {
 			referenceTriggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 			channel = Channels.newChannel(inputStream);
 			channel.read(referenceTriggerByteBuffer);
+
+			referenceTriggerByteBuffer.rewind();
+			referenceTriggerArray = new byte[referenceTriggerByteBuffer.remaining()];
+			referenceTriggerByteBuffer.get(referenceTriggerArray);
 
 			resampledTriggerByteBuffer = ByteBuffer.allocateDirect(FINGERPRINT_TRIGGER_BUFFER_SIZE);
 			resampledTriggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -270,6 +277,11 @@ public class TuneURLService extends Service implements Constants {
 
 		try {
 
+			startCheckingTrigger = false;
+			start_position_write = 0;
+			start_position_read = 0;
+			frameCounter = 0;
+			lastSearchTime = 0;
 			recordTuneUrl = false;
 
 			isPlaying = true;
@@ -357,11 +369,17 @@ public class TuneURLService extends Service implements Constants {
 
 	private void initializeBuffers(int sampleRate, int numChannels){
 
+		System.out.println("initializeBuffers(): sampleRate = " + sampleRate);
+
 		//int triggerByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * numChannels * (double)(TRIGGER_SIZE_MILLIS / 1000d));
 		int triggerByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * 2 * (double)(TRIGGER_SIZE_MILLIS / 1000d));
 
+		System.out.println("triggerByteBufferSize = " + triggerByteBufferSize);
+
 		triggerByteBuffer = ByteBuffer.allocateDirect(triggerByteBufferSize);
 		triggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+		windowByteArray = new byte[triggerByteBufferSize * 3];
 
 		//int tuneUrlByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * numChannels * (double)(TUNE_URL_SIZE_MILLIS / 1000d));
 		int tuneUrlByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * 2 * (double)(TUNE_URL_SIZE_MILLIS / 1000d));
@@ -471,7 +489,7 @@ public class TuneURLService extends Service implements Constants {
 
 								ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outIndex);
 
-								writeToBuffer(outputBuffer);
+								writeData(outputBuffer);
 
 								mediaCodec.releaseOutputBuffer(outIndex, false);
 
@@ -488,12 +506,13 @@ public class TuneURLService extends Service implements Constants {
 				long timeSpent = currentTime - startTime;
 				long timePlaySpent = currentPlayTime - startPlayTime;
 
-				if (!recordTuneUrl && timePlaySpent > (timeSpent + 1000)) {
+				if (!recordTuneUrl && (timePlaySpent > (timeSpent + 500))) {
 
 					try {
 
 						Thread.sleep(timePlaySpent - timeSpent);
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 
 						e.printStackTrace();
 					}
@@ -503,90 +522,125 @@ public class TuneURLService extends Service implements Constants {
 			releaseMediaExtractor();
 		}
 	}
+	
 
+	private void writeData(ByteBuffer outputBuffer){
 
-	private void writeToBuffer(ByteBuffer outputBuffer){
+		//System.out.println("TuneURLService.writeData()");
 
-		System.out.println("TuneURLService.writeToBuffer()");
-
-		if(numChannels == 2) {
-
-			if (recordTuneUrl) {
-
-				if (outputBuffer.remaining() <= tuneUrlByteBuffer.remaining()) {
-
-					tuneUrlByteBuffer.put(outputBuffer);
-				}
-				else {
-
-					int remaining = tuneUrlByteBuffer.remaining();
-
-					for(int i=0; i<remaining; i++){
-
-						tuneUrlByteBuffer.put(outputBuffer.get(i));
-					}
-
-					searchTuneUrlFingerprint();
-				}
-			}
-			else {
-
-				if (outputBuffer.remaining() <= triggerByteBuffer.remaining()) {
-
-					triggerByteBuffer.put(outputBuffer);
-				}
-				else {
-
-					int remaining = triggerByteBuffer.remaining();
-
-					for(int i=0; i<remaining; i++){
-
-						triggerByteBuffer.put(outputBuffer.get(i));
-					}
-
-					checkTriggerFingerprint();
-				}
-			}
-		}
-		else{
+		if(numChannels == 1) {
 
 			byte[] stereo = convertToStereo(outputBuffer);
 
-			if (recordTuneUrl) {
+			ByteBuffer newOutputBuffer = ByteBuffer.allocateDirect(stereo.length);
+			newOutputBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-				if (stereo.length <= tuneUrlByteBuffer.remaining()) {
+			newOutputBuffer.put(stereo);
+			newOutputBuffer.rewind();
 
-					tuneUrlByteBuffer.put(stereo);
-				}
-				else {
+			checkData(newOutputBuffer);
+		}
+		else{
 
-					int remaining = tuneUrlByteBuffer.remaining();
+			checkData(outputBuffer);
+		}
+	}
 
-					for(int i=0; i<remaining; i++){
 
-						tuneUrlByteBuffer.put(stereo[i]);
-					}
+	private void checkData(ByteBuffer outputBuffer){
 
-					searchTuneUrlFingerprint();
-				}
+		//System.out.println("TuneURLService.checkData()");
+
+		if (recordTuneUrl) {
+
+			if (outputBuffer.remaining() <= tuneUrlByteBuffer.remaining()) {
+
+				tuneUrlByteBuffer.put(outputBuffer);
 			}
 			else {
 
-				if (stereo.length <= triggerByteBuffer.remaining()) {
+				int remaining = tuneUrlByteBuffer.remaining();
 
-					triggerByteBuffer.put(stereo);
+				for(int i=0; i<remaining; i++){
+
+					tuneUrlByteBuffer.put(outputBuffer.get(i));
 				}
-				else {
 
-					int remaining = triggerByteBuffer.remaining();
+				searchTuneUrlFingerprint();
+			}
+		}
+		else {
 
-					for(int i=0; i<remaining; i++){
+			int freeBytes = windowByteArray.length - start_position_write;
+			int frameSize = outputBuffer.remaining();
 
-						triggerByteBuffer.put(stereo[i]);
+			if (frameSize < freeBytes) {
+
+				int length = frameSize;
+
+				outputBuffer.get(windowByteArray, start_position_write, length);
+
+				start_position_write = start_position_write + length;
+			}
+			else {
+
+				int length = frameSize - freeBytes;
+
+				for(int i=0; i<freeBytes; i++){
+
+					windowByteArray[start_position_write + i] = outputBuffer.get(i);
+				}
+
+				for(int i=0; i<length; i++){
+
+					windowByteArray[i] = outputBuffer.get(freeBytes + i);
+				}
+
+				start_position_write = length;
+			}
+
+			if(!startCheckingTrigger){
+
+				if(start_position_write >= triggerByteBuffer.capacity()){
+
+					startCheckingTrigger = true;
+				}
+			}
+
+			if(startCheckingTrigger){
+
+				if(frameCounter % SCANNING_PERIOD_IN_FRAMES == 0) {
+
+					triggerByteBuffer.clear();
+
+					if(windowByteArray.length - start_position_read > triggerByteBuffer.capacity()){
+
+						triggerByteBuffer.put(windowByteArray, start_position_read, triggerByteBuffer.capacity());
+					}
+					else {
+
+						int first_leg_length = windowByteArray.length - start_position_read;
+						int second_leg_length = triggerByteBuffer.capacity() - first_leg_length;
+
+						triggerByteBuffer.put(windowByteArray, start_position_read, first_leg_length);
+						triggerByteBuffer.put(windowByteArray, 0, second_leg_length);
 					}
 
-					checkTriggerFingerprint();
+					start_position_read = start_position_read + SCANNING_PERIOD_IN_FRAMES * frameSize;
+					if(start_position_read >= windowByteArray.length){
+
+						start_position_read = start_position_read - windowByteArray.length;
+					}
+
+					long currentTime = Calendar.getInstance().getTimeInMillis();
+
+					if((currentTime - lastSearchTime) > 5 * 1000){
+
+						checkTriggerFingerprint();
+					}
 				}
+
+				frameCounter = frameCounter + 1;
 			}
 		}
 	}
@@ -642,15 +696,19 @@ public class TuneURLService extends Service implements Constants {
 
 	private void checkTriggerFingerprint() {
 
-		System.out.println("TuneURLService.checkTriggerFingerprint()");
+		//System.out.println("TuneURLService.checkTriggerFingerprint()");
 
 		Resample resample = null;
 
 		try {
 
 			triggerByteBuffer.rewind();
-			referenceTriggerByteBuffer.rewind();
+
 			resampledTriggerByteBuffer.clear();
+
+			referenceTriggerByteBuffer.clear();
+			referenceTriggerByteBuffer.put(referenceTriggerArray);
+			referenceTriggerByteBuffer.rewind();
 
 			resample = new Resample();
 			resample.create(sampleRate, FINGERPRINT_SAMPLE_RATE, 2048, 1);			
@@ -659,7 +717,7 @@ public class TuneURLService extends Service implements Constants {
 
 			if(output_len > 0) {
 
-				mSimilarity = getSimilarity(referenceTriggerByteBuffer, FINGERPRINT_TRIGGER_BUFFER_SIZE / 2, resampledTriggerByteBuffer, FINGERPRINT_TRIGGER_BUFFER_SIZE / 2);
+				mSimilarity = getSimilarity(referenceTriggerByteBuffer, (int)(FINGERPRINT_TRIGGER_BUFFER_SIZE/2), resampledTriggerByteBuffer, (int)(FINGERPRINT_TRIGGER_BUFFER_SIZE/2));
 
 				System.out.println("TuneURL - similarity: " + mSimilarity);
 
@@ -687,22 +745,12 @@ public class TuneURLService extends Service implements Constants {
 				}
 			}
 		}
-		try {
-
-			triggerByteBuffer.clear();
-		}
-		catch (Exception e){
-
-			e.printStackTrace();
-		}
 	}
 
 
 	private void searchTuneUrlFingerprint(){
 
-		System.out.println("searchTuneUrlFingerprint()");
-
-		recordTuneUrl = false;
+		System.out.println("TuneURLService.searchTuneUrlFingerprint()");
 
 		Resample resample = null;
 
@@ -718,6 +766,8 @@ public class TuneURLService extends Service implements Constants {
 
 			if(output_len > 0) {
 
+				resampledTuneUrlByteBuffer.rewind();
+
 				byte[] monoAudio = convertToMono(resampledTuneUrlByteBuffer);
 
 				if(monoAudio != null) {
@@ -727,7 +777,8 @@ public class TuneURLService extends Service implements Constants {
 					byteBuffer.put(monoAudio);
 					byteBuffer.rewind();
 
-					String fingerprint_string = extractFingerprintFromByteBuffer(byteBuffer, (int) ((double) monoAudio.length / 2d));
+					//String fingerprint_string = extractFingerprintFromByteBuffer(byteBuffer, (int) ((double) monoAudio.length / 2d));
+					String fingerprint_string = extractFingerprintFromByteBuffer(byteBuffer, monoAudio.length);
 
 					byteBuffer.clear();
 
@@ -776,6 +827,8 @@ public class TuneURLService extends Service implements Constants {
 
 			e.printStackTrace();
 		}
+
+		recordTuneUrl = false;
 	}
 
 
@@ -859,77 +912,12 @@ public class TuneURLService extends Service implements Constants {
 		i.putExtra(TUNEURL_ACTION, ACTION_SEARCH_FINGERPRINT);
 		i.putExtra(FINGERPRINT, fingerprint_string);
 		startService(i);
+
+		lastSearchTime = Calendar.getInstance().getTimeInMillis();
 	}
 
 
 	public native byte[] extractFingerprint(ByteBuffer byteBuffer, int waveLength);
 
 	public native float getSimilarity(ByteBuffer byteBuffer1, int waveLength1, ByteBuffer byteBuffer2, int waveLength2);
-
-
-
-
-
-	//Code for checking what is analysed
-
-	private OutputStream rawAudioDataOutputStream;
-
-	public void initializeRawAudioDataRecording(String rawFilePath){
-
-		try{
-
-			File file = new File(rawFilePath);
-
-			rawAudioDataOutputStream = new FileOutputStream(file);
-		}
-		catch (Exception e) {
-
-			e.printStackTrace();
-		}
-	}
-
-
-	private void writeToFile(byte[] content) {
-
-		if (rawAudioDataOutputStream != null &&
-				content != null &&
-				content.length > 0) {
-
-			try {
-
-				rawAudioDataOutputStream.write(content);
-			}
-			catch(Exception e){
-
-				e.printStackTrace();
-			}
-		}
-	}
-
-
-	private void releaseAudioOutputStream(){
-
-		if (rawAudioDataOutputStream != null) {
-
-			try {
-
-				rawAudioDataOutputStream.flush();
-			}
-			catch(Exception e){
-
-				e.printStackTrace();
-			}
-
-			try {
-
-				rawAudioDataOutputStream.close();
-			}
-			catch(Exception e){
-
-				e.printStackTrace();
-			}
-
-			rawAudioDataOutputStream = null;
-		}
-	}
 }
