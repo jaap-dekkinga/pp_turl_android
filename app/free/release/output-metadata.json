@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.tuneurl.podcastplayer",
+  "variantName": "freeRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 2060195,
+      "versionName": "2.6.1",
+      "outputFile": "app-free-release.apk"
+    }
+  ]
+}

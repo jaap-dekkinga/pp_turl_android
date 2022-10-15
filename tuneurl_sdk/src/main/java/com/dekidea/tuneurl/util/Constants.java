@@ -19,11 +19,6 @@ public interface Constants {
     public static final String SETTING_POLL_API_URL = "com.dekidea.tuneurl.SETTING_POLL_API_URL";
     public static final String SETTING_INTERESTS_API_URL = "com.dekidea.tuneurl.SETTING_INTERESTS_API_URL";
 
-    public static final String DEFAULT_TUNEURL_API_BASE_URL = "http://ec2-54-213-252-225.us-west-2.compute.amazonaws.com";
-    public static final String DEFAULT_SEARCH_FINGERPRINT_URL = "https://pnz3vadc52.execute-api.us-east-2.amazonaws.com/dev/search-fingerprint";
-    public static final String DEFAULT_POLL_API_URL = "http://pollapiwebservice.us-east-2.elasticbeanstalk.com/api/pollapi";
-    public static final String DEFAULT_INTERESTS_API_URL = "https://65neejq3c9.execute-api.us-east-2.amazonaws.com/interests";
-
     public static final String TUNEURL_ACTION = "com.dekidea.tuneurl.TUNEURL_ACTION";
     public static final String LISTENING_ACTION = "com.dekidea.tuneurl.LISTENING_ACTION";
     public static final String SEARCH_FINGERPRINT_RESULT_RECEIVED = "com.dekidea.tuneurl.SEARCH_FINGERPRINT_RESULT_RECEIVED";

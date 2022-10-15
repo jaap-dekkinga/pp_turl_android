@@ -34,7 +34,7 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.user_interface_label);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.user_interface_label));
     }
 
     private void setupInterfaceScreen() {

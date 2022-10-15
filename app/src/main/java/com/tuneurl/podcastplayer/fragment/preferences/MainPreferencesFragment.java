@@ -147,10 +147,11 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setupSearch() {
+
         SearchPreference searchPreference = findPreference("searchPreference");
         SearchConfiguration config = searchPreference.getSearchConfiguration();
         config.setActivity((AppCompatActivity) getActivity());
-        config.setFragmentContainerViewId(R.id.settingsContainer);
+        config.setFragmentContainerViewId(R.id.main_view);
         config.setBreadcrumbsEnabled(true);
 
         config.index(R.xml.preferences_user_interface)

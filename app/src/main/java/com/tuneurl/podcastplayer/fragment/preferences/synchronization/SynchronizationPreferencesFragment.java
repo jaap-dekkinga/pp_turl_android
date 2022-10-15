@@ -30,7 +30,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import com.tuneurl.podcastplayer.R;
-import com.tuneurl.podcastplayer.activity.PreferenceActivity;
+import com.tuneurl.podcastplayer.activity.MainActivity;
 import com.tuneurl.podcastplayer.dialog.AuthenticationDialog;
 
 public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat {
@@ -50,7 +50,7 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.synchronization_pref);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.synchronization_pref));
         updateScreen();
         EventBus.getDefault().register(this);
     }
@@ -59,7 +59,7 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setSubtitle("");
+        ((MainActivity) getActivity()).setSelectedFragmentSubTitle("");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -73,7 +73,7 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
             updateLastSyncReport(SynchronizationSettings.isLastSyncSuccessful(),
                     SynchronizationSettings.getLastSyncAttempt());
         } else {
-            ((PreferenceActivity) getActivity()).getSupportActionBar().setSubtitle(event.getMessageResId());
+            ((MainActivity) getActivity()).setSelectedFragmentSubTitle("" + event.getMessageResId());
         }
     }
 
@@ -144,7 +144,7 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
                     SynchronizationSettings.getLastSyncAttempt());
         } else {
             findPreference(PREFERENCE_LOGOUT).setSummary(null);
-            ((PreferenceActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+            ((MainActivity) getActivity()).setSelectedFragmentSubTitle(null);
         }
     }
 
@@ -217,6 +217,6 @@ public class SynchronizationPreferencesFragment extends PreferenceFragmentCompat
                         ? R.string.gpodnetsync_pref_report_successful : R.string.gpodnetsync_pref_report_failed),
                 DateUtils.getRelativeDateTimeString(getContext(),
                         lastTime, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setSubtitle(status);
+        ((MainActivity) getActivity()).setSelectedFragmentSubTitle(status);
     }
 }

@@ -86,7 +86,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.import_export_pref);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.import_export_pref));
     }
 
     @Override

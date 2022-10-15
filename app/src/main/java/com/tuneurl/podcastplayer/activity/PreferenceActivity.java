@@ -64,6 +64,9 @@ public class PreferenceActivity extends AppCompatActivity implements SearchPrefe
     }
 
     private PreferenceFragmentCompat getPreferenceScreen(int screen) {
+
+        System.out.println("getPreferenceScreen()");
+
         PreferenceFragmentCompat prefFragment = null;
 
         if (screen == R.xml.preferences_user_interface) {

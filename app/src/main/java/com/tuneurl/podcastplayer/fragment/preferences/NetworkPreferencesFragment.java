@@ -34,7 +34,7 @@ public class NetworkPreferencesFragment extends PreferenceFragmentCompat
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.network_pref);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.network_pref));
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
     }
 

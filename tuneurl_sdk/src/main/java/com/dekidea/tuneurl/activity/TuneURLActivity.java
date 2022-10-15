@@ -25,6 +25,7 @@ import java.util.TimerTask;
 
 public class TuneURLActivity extends AppCompatActivity implements Constants {
 
+    private static final int REQUEST_PHONE_CALL = 1234;
     private static final long DEFAULT_CLOSE_INTERVAL = 10000L;
 
     private APIData apiData;
@@ -161,7 +162,15 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
                         TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
 
-                        callPhone(apiData);
+                        if (ActivityCompat.checkSelfPermission(getApplicationContext(),
+                                Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+
+                            callPhone(apiData);
+                        }
+                        else{
+
+                            ActivityCompat.requestPermissions(TuneURLActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                        }
                     }
                     else if (ACTION_COUPON.equals(action)) {
 
@@ -179,9 +188,16 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
                     //TuneURLManager.startScanning(this);
                 }
             }
-        }
 
-        this.finish();
+            if(!ACTION_PHONE.equals(action)){
+
+                this.finish();
+            }
+        }
+        else{
+
+            this.finish();
+        }
     }
 
 
@@ -239,6 +255,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
                     else{
 
                         //TuneURLManager.startScanning(this);
+
+                        ActivityCompat.requestPermissions(TuneURLActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
                     }
                 }
                 catch (Exception e) {
@@ -251,6 +269,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
             e.printStackTrace();
         }
+
+        this.finish();
     }
 
 
@@ -272,5 +292,31 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
         Timer timer = new Timer();
         timer.schedule(timerTask, DEFAULT_CLOSE_INTERVAL);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] results) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+
+        System.out.println("onRequestPermissionsResult(): " + requestCode + " | " + results[0]);
+
+        switch (requestCode) {
+
+            case REQUEST_PHONE_CALL: {
+
+                if (results != null &&
+                        results.length > 0 &&
+                        results[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    System.out.println("results[0] = " + results[0]);
+
+                    callPhone(apiData);
+                }
+
+                return;
+            }
+        }
     }
 }

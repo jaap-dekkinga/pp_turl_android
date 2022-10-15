@@ -65,7 +65,7 @@ import com.tuneurl.podcastplayer.fragment.preferences.PlaybackPreferencesFragmen
 import com.tuneurl.podcastplayer.fragment.preferences.StoragePreferencesFragment;
 import com.tuneurl.podcastplayer.fragment.preferences.SwipePreferencesFragment;
 import com.tuneurl.podcastplayer.fragment.preferences.UserInterfacePreferencesFragment;
-import com.tuneurl.podcastplayer.fragment.preferences.synchronization.SynchronizationPreferencesFragment2;
+import com.tuneurl.podcastplayer.fragment.preferences.synchronization.SynchronizationPreferencesFragment;
 import com.tuneurl.podcastplayer.playback.cast.CastEnabledActivity;
 import com.tuneurl.podcastplayer.preferences.PreferenceUpgrader;
 import com.tuneurl.podcastplayer.ui.appstartintent.MainActivityStarter;
@@ -112,13 +112,17 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
 
     BottomNavigationView mBottomNavigationView;
     private TextView fragmentTitle;
+    private TextView fragmentSubTitle;
 
     public void setSelectedFragmentTitle(String title){
 
         fragmentTitle.setText(title);
     }
 
+    public void setSelectedFragmentSubTitle(String subTitle){
 
+        fragmentSubTitle.setText(subTitle);
+    }
 
 
 
@@ -141,6 +145,7 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
         StorageUtils.checkStorageAvailability(this);
         setContentView(R.layout.main_new);
         fragmentTitle = findViewById(R.id.fragmentTitle);
+        fragmentSubTitle = findViewById(R.id.fragmentSubTitle);
         recycledViewPool.setMaxRecycledViews(R.id.view_type_episode_item, 25);
         mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -818,7 +823,7 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
         } else if (screen == R.xml.preferences_autodownload) {
             prefFragment = new AutoDownloadPreferencesFragment();
         } else if (screen == R.xml.preferences_synchronization) {
-            prefFragment = new SynchronizationPreferencesFragment2();
+            prefFragment = new SynchronizationPreferencesFragment();
         } else if (screen == R.xml.preferences_playback) {
             prefFragment = new PlaybackPreferencesFragment();
         } else if (screen == R.xml.preferences_notifications) {

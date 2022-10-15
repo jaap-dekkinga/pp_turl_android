@@ -20,7 +20,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.asha.libresample2.Resample;
 import com.dekidea.tuneurl.R;
-import com.dekidea.tuneurl.activity.TuneURLActivity;
 import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.dekidea.tuneurl.util.WakeLocker;

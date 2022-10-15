@@ -37,7 +37,7 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.playback_pref);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.playback_pref));
     }
 
     private void setupPlaybackScreen() {

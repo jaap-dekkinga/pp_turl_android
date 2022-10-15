@@ -31,13 +31,6 @@ public class WebAPIClient implements Constants {
 
 
     public WebAPIClient(Context context) {
-/*
-        TUNEURL_API_BASE_URL = TuneURLManager.fetchStringSetting(context, SETTING_TUNEURL_API_BASE_URL, DEFAULT_TUNEURL_API_BASE_URL);
-        SEARCH_FINGERPRINT_URL = TuneURLManager.fetchStringSetting(context, SETTING_SEARCH_FINGERPRINT_URL, DEFAULT_SEARCH_FINGERPRINT_URL);
-        POLL_API_URL = TuneURLManager.fetchStringSetting(context, SETTING_POLL_API_URL, DEFAULT_POLL_API_URL);
-        INTERESTS_API_URL = TuneURLManager.fetchStringSetting(context, SETTING_INTERESTS_API_URL, DEFAULT_INTERESTS_API_URL);
-
- */
 
         TUNEURL_API_BASE_URL = TuneURLManager.fetchStringSetting(context, SETTING_TUNEURL_API_BASE_URL, "");
         SEARCH_FINGERPRINT_URL = TuneURLManager.fetchStringSetting(context, SETTING_SEARCH_FINGERPRINT_URL, "");
@@ -89,6 +82,8 @@ public class WebAPIClient implements Constants {
                                 if (response.code() == 200) {
 
                                     JsonArray result = response.body();
+
+                                    System.out.println(result.toString());
 
                                     JsonObject jsonResult = new JsonObject();
 

@@ -19,8 +19,24 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/titleColor"
-            android:layout_margin="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:id="@+id/fragmentSubTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/titleColor"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/fragmentTitle"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
@@ -36,7 +52,7 @@
             android:layout_height="match_parent"
             android:foreground="?android:windowContentOverlay"
             tools:background="@android:color/holo_red_dark"
-            android:layout_below="@id/fragmentTitle"
+            android:layout_below="@id/fragmentSubTitle"
             android:layout_above="@id/bottom_navigation_view"/>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout

@@ -4,5 +4,5 @@
     <integer name="nav_drawer_screen_size_percent">80</integer>
     <integer name="swipe_to_refresh_duration_in_ms">750</integer>
     <integer name="swipe_refresh_distance">300</integer>
-    <integer name="google_play_services_version">21</integer>
+    <integer name="google_play_services_version">12451000</integer>
 </resources>
