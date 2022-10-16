@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.core.service.playback;
+package com.dekidea.hearact.core.service.playback;
 
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;

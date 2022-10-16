@@ -19,7 +19,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <com.tuneurl.podcastplayer.view.PlaybackSpeedSeekBar
+        <com.dekidea.hearact.view.PlaybackSpeedSeekBar
             android:id="@+id/seekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

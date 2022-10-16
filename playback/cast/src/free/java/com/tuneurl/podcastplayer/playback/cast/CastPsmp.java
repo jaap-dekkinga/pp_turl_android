@@ -1,9 +1,9 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.tuneurl.podcastplayer.playback.base.PlaybackServiceMediaPlayer;
+import com.dekidea.hearact.playback.base.PlaybackServiceMediaPlayer;
 
 /**
  * Stub implementation of CastPsmp for Free build flavour

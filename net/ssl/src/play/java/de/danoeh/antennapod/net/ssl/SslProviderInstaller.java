@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.net.ssl;
+package com.dekidea.hearact.net.ssl;
 
 import android.content.Context;
 import com.google.android.gms.common.GoogleApiAvailability;

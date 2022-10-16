@@ -14,7 +14,7 @@ android {
     defaultConfig {
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [eventBusIndex: 'com.tuneurl.podcastplayer.core.ApCoreEventBusIndex']
+                arguments = [eventBusIndex: 'com.dekidea.hearact.core.ApCoreEventBusIndex']
             }
         }
     }

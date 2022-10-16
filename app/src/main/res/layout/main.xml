@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tuneurl.podcastplayer.activity.MainActivity">
+    tools:context="com.dekidea.hearact.activity.MainActivity">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -36,7 +36,7 @@
                 android:background="?android:attr/windowBackground"
                 android:elevation="8dp"
                 android:visibility="gone"
-                app:layout_behavior="com.tuneurl.podcastplayer.view.LockableBottomSheetBehavior" />
+                app:layout_behavior="com.dekidea.hearact.view.LockableBottomSheetBehavior" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

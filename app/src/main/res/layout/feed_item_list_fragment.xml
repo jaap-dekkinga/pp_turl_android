@@ -53,7 +53,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.tuneurl.podcastplayer.view.EpisodeItemListRecyclerView
+        <com.dekidea.hearact.view.EpisodeItemListRecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

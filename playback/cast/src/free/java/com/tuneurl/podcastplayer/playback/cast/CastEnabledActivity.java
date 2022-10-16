@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import androidx.appcompat.app.AppCompatActivity;
 

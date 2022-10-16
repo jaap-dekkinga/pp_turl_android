@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -24,15 +24,15 @@ import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.tuneurl.podcastplayer.event.PlayerErrorEvent;
-import com.tuneurl.podcastplayer.event.playback.BufferUpdateEvent;
-import com.tuneurl.podcastplayer.model.feed.FeedMedia;
-import com.tuneurl.podcastplayer.model.playback.MediaType;
-import com.tuneurl.podcastplayer.model.playback.Playable;
-import com.tuneurl.podcastplayer.model.playback.RemoteMedia;
-import com.tuneurl.podcastplayer.playback.base.PlaybackServiceMediaPlayer;
-import com.tuneurl.podcastplayer.playback.base.PlayerStatus;
-import com.tuneurl.podcastplayer.playback.base.RewindAfterPauseUtils;
+import com.dekidea.hearact.event.PlayerErrorEvent;
+import com.dekidea.hearact.event.playback.BufferUpdateEvent;
+import com.dekidea.hearact.model.feed.FeedMedia;
+import com.dekidea.hearact.model.playback.MediaType;
+import com.dekidea.hearact.model.playback.Playable;
+import com.dekidea.hearact.model.playback.RemoteMedia;
+import com.dekidea.hearact.playback.base.PlaybackServiceMediaPlayer;
+import com.dekidea.hearact.playback.base.PlayerStatus;
+import com.dekidea.hearact.playback.base.RewindAfterPauseUtils;
 import org.greenrobot.eventbus.EventBus;
 
 /**

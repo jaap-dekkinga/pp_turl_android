@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.tuneurl.podcastplayer.ui.statistics.years.BarChartView
+    <com.dekidea.hearact.ui.statistics.years.BarChartView
         android:id="@+id/barChart"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

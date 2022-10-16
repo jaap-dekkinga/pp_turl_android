@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import android.content.ContentResolver;
 import android.util.Log;
@@ -8,11 +8,11 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.common.images.WebImage;
-import com.tuneurl.podcastplayer.model.feed.Feed;
-import com.tuneurl.podcastplayer.model.feed.FeedItem;
-import com.tuneurl.podcastplayer.model.feed.FeedMedia;
-import com.tuneurl.podcastplayer.model.playback.Playable;
-import com.tuneurl.podcastplayer.model.playback.RemoteMedia;
+import com.dekidea.hearact.model.feed.Feed;
+import com.dekidea.hearact.model.feed.FeedItem;
+import com.dekidea.hearact.model.feed.FeedMedia;
+import com.dekidea.hearact.model.playback.Playable;
+import com.dekidea.hearact.model.playback.RemoteMedia;
 
 import java.util.List;
 
@@ -25,14 +25,14 @@ public class CastUtils {
 
     private static final String TAG = "CastUtils";
 
-    public static final String KEY_MEDIA_ID = "com.tuneurl.podcastplayer.core.cast.MediaId";
+    public static final String KEY_MEDIA_ID = "com.dekidea.hearact.core.cast.MediaId";
 
-    public static final String KEY_EPISODE_IDENTIFIER = "com.tuneurl.podcastplayer.core.cast.EpisodeId";
-    public static final String KEY_EPISODE_LINK = "com.tuneurl.podcastplayer.core.cast.EpisodeLink";
-    public static final String KEY_STREAM_URL = "com.tuneurl.podcastplayer.core.cast.StreamUrl";
-    public static final String KEY_FEED_URL = "com.tuneurl.podcastplayer.core.cast.FeedUrl";
-    public static final String KEY_FEED_WEBSITE = "com.tuneurl.podcastplayer.core.cast.FeedWebsite";
-    public static final String KEY_EPISODE_NOTES = "com.tuneurl.podcastplayer.core.cast.EpisodeNotes";
+    public static final String KEY_EPISODE_IDENTIFIER = "com.dekidea.hearact.core.cast.EpisodeId";
+    public static final String KEY_EPISODE_LINK = "com.dekidea.hearact.core.cast.EpisodeLink";
+    public static final String KEY_STREAM_URL = "com.dekidea.hearact.core.cast.StreamUrl";
+    public static final String KEY_FEED_URL = "com.dekidea.hearact.core.cast.FeedUrl";
+    public static final String KEY_FEED_WEBSITE = "com.dekidea.hearact.core.cast.FeedWebsite";
+    public static final String KEY_EPISODE_NOTES = "com.dekidea.hearact.core.cast.EpisodeNotes";
 
     /**
      * The field <code>AntennaPod.FormatVersion</code> specifies which version of MediaMetaData
@@ -43,7 +43,7 @@ public class CastUtils {
      * <code>MAX_VERSION_FORWARD_COMPATIBILITY</code> value set on the earlier one, so that it
      * doesn't try to parse the object.
      */
-    public static final String KEY_FORMAT_VERSION = "com.tuneurl.podcastplayer.core.cast.FormatVersion";
+    public static final String KEY_FORMAT_VERSION = "com.dekidea.hearact.core.cast.FormatVersion";
     public static final int FORMAT_VERSION_VALUE = 1;
     public static final int MAX_VERSION_FORWARD_COMPATIBILITY = 9999;
 

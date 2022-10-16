@@ -1,14 +1,14 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import android.net.Uri;
 import android.text.TextUtils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.tuneurl.podcastplayer.model.feed.Feed;
-import com.tuneurl.podcastplayer.model.feed.FeedItem;
-import com.tuneurl.podcastplayer.model.feed.FeedMedia;
-import com.tuneurl.podcastplayer.model.playback.RemoteMedia;
+import com.dekidea.hearact.model.feed.Feed;
+import com.dekidea.hearact.model.feed.FeedItem;
+import com.dekidea.hearact.model.feed.FeedMedia;
+import com.dekidea.hearact.model.playback.RemoteMedia;
 import java.util.Calendar;
 
 public class MediaInfoCreator {

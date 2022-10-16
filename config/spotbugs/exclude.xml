@@ -2,81 +2,81 @@
 <FindBugsFilter>
     <Match>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
-        <Class name="com.tuneurl.podcastplayer.adapter.NavListAdapter"/>
+        <Class name="com.dekidea.hearact.adapter.NavListAdapter"/>
     </Match>
     <Match>
         <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
-        <Class name="com.tuneurl.podcastplayer.net.ssl.NoV1SslSocketFactory"/>
+        <Class name="com.dekidea.hearact.net.ssl.NoV1SslSocketFactory"/>
     </Match>
     <Match>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
-        <Class name="com.tuneurl.podcastplayer.parser.media.vorbis.VorbisCommentReader"/>
+        <Class name="com.dekidea.hearact.parser.media.vorbis.VorbisCommentReader"/>
     </Match>
     <Match>
         <Bug pattern="HSC_HUGE_SHARED_STRING_CONSTANT"/>
-        <Class name="com.tuneurl.podcastplayer.net.ssl.BackportCaCerts"/>
+        <Class name="com.dekidea.hearact.net.ssl.BackportCaCerts"/>
     </Match>
     <Match>
         <Bug pattern="MS_CANNOT_BE_FINAL"/>
-        <Class name="com.tuneurl.podcastplayer.core.service.playback.PlaybackService"/>
+        <Class name="com.dekidea.hearact.core.service.playback.PlaybackService"/>
     </Match>
     <Match>
         <Bug pattern="MS_MUTABLE_ARRAY"/>
-        <Class name="com.tuneurl.podcastplayer.fragment.NavDrawerFragment"/>
+        <Class name="com.dekidea.hearact.fragment.NavDrawerFragment"/>
     </Match>
     <Match>
         <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
-        <Class name="com.tuneurl.podcastplayer.menuhandler.MenuItemUtils"/>
+        <Class name="com.dekidea.hearact.menuhandler.MenuItemUtils"/>
     </Match>
     <Match>
         <Bug pattern="NP_NONNULL_PARAM_VIOLATION"/>
-        <Class name="com.tuneurl.podcastplayer.activity.MainActivity"/>
+        <Class name="com.dekidea.hearact.activity.MainActivity"/>
     </Match>
     <Match>
         <Bug pattern="NP_NULL_ON_SOME_PATH"/>
-        <Class name="com.tuneurl.podcastplayer.activity.MainActivity"/>
+        <Class name="com.dekidea.hearact.activity.MainActivity"/>
     </Match>
     <Match>
         <Bug pattern="NP_NULL_ON_SOME_PATH"/>
-        <Class name="com.tuneurl.podcastplayer.model.feed.FeedMedia"/>
+        <Class name="com.dekidea.hearact.model.feed.FeedMedia"/>
     </Match>
     <Match>
         <Bug pattern="NP_NULL_PARAM_DEREF"/>
-        <Class name="com.tuneurl.podcastplayer.model.feed.FeedMedia"/>
+        <Class name="com.dekidea.hearact.model.feed.FeedMedia"/>
     </Match>
     <Match>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
-        <Class name="com.tuneurl.podcastplayer.preferences.PreferenceUpgrader"/>
+        <Class name="com.dekidea.hearact.preferences.PreferenceUpgrader"/>
     </Match>
     <Match>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
-        <Class name="com.tuneurl.podcastplayer.PodcastApp"/>
+        <Class name="com.dekidea.hearact.PodcastApp"/>
     </Match>
     <Match>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
-        <Class name="com.tuneurl.podcastplayer.core.service.download.DownloadService"/>
+        <Class name="com.dekidea.hearact.core.service.download.DownloadService"/>
     </Match>
     <Match>
         <Bug pattern="MS_CANNOT_BE_FINAL"/>
-        <Class name="com.tuneurl.podcastplayer.core.service.download.DownloadService"/>
+        <Class name="com.dekidea.hearact.core.service.download.DownloadService"/>
     </Match>
     <Match>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
-        <Class name="com.tuneurl.podcastplayer.core.service.playback.PlaybackService"/>
+        <Class name="com.dekidea.hearact.core.service.playback.PlaybackService"/>
     </Match>
     <Match>
         <Bug pattern="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
-        <Class name="com.tuneurl.podcastplayer.core.storage.NavDrawerData$TagDrawerItem"/>
+        <Class name="com.dekidea.hearact.core.storage.NavDrawerData$TagDrawerItem"/>
     </Match>
     <Match>
         <Bug pattern="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"/>
-        <Class name="com.tuneurl.podcastplayer.core.cast.CastButtonVisibilityManager"/>
+        <Class name="com.dekidea.hearact.core.cast.CastButtonVisibilityManager"/>
     </Match>
 
-    <Match><Class name="com.tuneurl.podcastplayer.core.ClientConfig"/></Match>
+    <Match><Class name="com.dekidea.hearact.core.ClientConfig"/></Match>
 
-    <Match><Package name="com.tuneurl.podcastplayer.core.glide"/></Match>
-    <Match><Package name="com.tuneurl.podcastplayer.databinding"/></Match>
+    <Match><Package name="com.dekidea.hearact.core.glide"/></Match>
+    <Match><Package name="com.dekidea.hearact.databinding"/></Match>
 
     <Match><Bug pattern="EI_EXPOSE_REP"/></Match>
     <Match><Bug pattern="EI_EXPOSE_REP2"/></Match>

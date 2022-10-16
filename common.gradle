@@ -9,7 +9,7 @@ android {
         vectorDrawables.useSupportLibrary true
         vectorDrawables.generatedDensities = []
 
-        testApplicationId "com.tuneurl.podcastplayer.core.tests"
+        testApplicationId "com.dekidea.hearact.core.tests"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

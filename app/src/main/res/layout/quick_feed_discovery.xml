@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.tuneurl.podcastplayer.ui.common.WrappingGridView
+        <com.dekidea.hearact.ui.common.WrappingGridView
             android:id="@+id/discover_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -25,7 +25,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [eventBusIndex: 'com.tuneurl.podcastplayer.ApEventBusIndex']
+                arguments = [eventBusIndex: 'com.dekidea.hearact.ApEventBusIndex']
             }
         }
     }
@@ -44,12 +44,12 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            resValue "string", "provider_authority", "com.tuneurl.podcastplayer.debug.provider"
-            resValue "string", "application_id", "com.tuneurl.podcastplayer.debug"
+            resValue "string", "provider_authority", "com.dekidea.hearact.debug.provider"
+            resValue "string", "application_id", "com.dekidea.hearact.debug"
         }
         release {
-            resValue "string", "provider_authority", "com.tuneurl.podcastplayer.provider"
-            resValue "string", "application_id", "com.tuneurl.podcastplayer"
+            resValue "string", "provider_authority", "com.dekidea.hearact.provider"
+            resValue "string", "application_id", "com.dekidea.hearact"
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.releaseConfig

@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.dialog;
+package com.dekidea.hearact.dialog;
 
 import android.app.Activity;
 

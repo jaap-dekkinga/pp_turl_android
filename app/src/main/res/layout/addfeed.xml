@@ -67,7 +67,7 @@
                 android:id="@+id/quickFeedDiscovery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.tuneurl.podcastplayer.fragment.QuickFeedDiscoveryFragment" />
+                android:name="com.dekidea.hearact.fragment.QuickFeedDiscoveryFragment" />
 
             </LinearLayout>
 

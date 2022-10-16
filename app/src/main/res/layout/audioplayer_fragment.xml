@@ -81,7 +81,7 @@
         android:layoutDirection="ltr"
         android:orientation="vertical">
 
-        <com.tuneurl.podcastplayer.view.ChapterSeekBar
+        <com.dekidea.hearact.view.ChapterSeekBar
             android:id="@+id/sbPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp">
 
-            <com.tuneurl.podcastplayer.view.PlayButton
+            <com.dekidea.hearact.view.PlayButton
                 android:id="@+id/butPlay"
                 android:layout_width="@dimen/audioplayer_playercontrols_length_big"
                 android:layout_height="@dimen/audioplayer_playercontrols_length_big"
@@ -149,7 +149,7 @@
                 app:srcCompat="@drawable/ic_play_48dp"
                 tools:srcCompat="@drawable/ic_play_48dp" />
 
-            <com.tuneurl.podcastplayer.ui.common.CircularProgressBar
+            <com.dekidea.hearact.ui.common.CircularProgressBar
                 android:layout_width="@dimen/audioplayer_playercontrols_length_big"
                 android:layout_height="@dimen/audioplayer_playercontrols_length_big"
                 android:layout_centerHorizontal="true"
@@ -199,7 +199,7 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp" />
 
-            <com.tuneurl.podcastplayer.ui.common.PlaybackSpeedIndicatorView
+            <com.dekidea.hearact.ui.common.PlaybackSpeedIndicatorView
                 android:id="@+id/butPlaybackSpeed"
                 android:layout_width="@dimen/audioplayer_playercontrols_length"
                 android:layout_height="@dimen/audioplayer_playercontrols_length"

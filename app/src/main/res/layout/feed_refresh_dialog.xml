@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="@string/feed_refresh_time" />
 
-    <com.tuneurl.podcastplayer.view.TimePicker
+    <com.dekidea.hearact.view.TimePicker
         android:id="@+id/timePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

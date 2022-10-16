@@ -7,5 +7,5 @@
                     android:minHeight="40dp"
                     android:minWidth="250dp"
                     android:minResizeWidth="40dp"
-                    android:configure="com.tuneurl.podcastplayer.activity.WidgetConfigActivity">
+                    android:configure="com.dekidea.hearact.activity.WidgetConfigActivity">
 </appwidget-provider>

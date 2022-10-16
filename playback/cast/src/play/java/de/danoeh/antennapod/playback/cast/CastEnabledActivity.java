@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.playback.cast;
+package com.dekidea.hearact.playback.cast;
 
 import android.os.Bundle;
 import android.view.Menu;

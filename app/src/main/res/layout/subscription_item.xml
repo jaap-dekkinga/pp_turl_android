@@ -2,13 +2,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:squareImageView="http://schemas.android.com/apk/com.tuneurl.podcastplayer"
+    xmlns:squareImageView="http://schemas.android.com/apk/com.dekidea.hearact"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground">
 
-    <com.tuneurl.podcastplayer.ui.common.SquareImageView
+    <com.dekidea.hearact.ui.common.SquareImageView
         android:id="@+id/imgvCover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +33,7 @@
         android:textColor="?android:attr/textColorPrimary"
         tools:text="@string/app_name" />
 
-    <com.tuneurl.podcastplayer.ui.common.TriangleLabelView
+    <com.dekidea.hearact.ui.common.TriangleLabelView
         android:id="@+id/triangleCountView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

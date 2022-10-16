@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tuneurl.podcastplayer"
+    package="com.dekidea.hearact"
     android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,9 +31,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".PodcastApp"
+        android:name="com.dekidea.hearact.PodcastApp"
         android:allowAudioPlaybackCapture="true"
-        android:backupAgent=".core.backup.OpmlBackupAgent"
+        android:backupAgent="com.dekidea.hearact.core.backup.OpmlBackupAgent"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:logo="@mipmap/ic_launcher"
@@ -49,12 +49,12 @@
             android:name="com.dekidea.tuneurl.activity.TuneURLActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PlaybackSpeedDialogActivity"
+            android:name="com.dekidea.hearact.activity.PlaybackSpeedDialogActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:noHistory="true">
             <intent-filter>
-                <action android:name="com.tuneurl.podcastplayer.intents.PLAYBACK_SPEED" />
+                <action android:name="com.dekidea.hearact.intents.PLAYBACK_SPEED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -74,7 +74,7 @@
             android:value="AEdPqrEAAAAI3a05VToCTlqBymJrbFGaKQMvF-bBAuLsOdavBA" />
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.tuneurl.podcastplayer.playback.cast.CastOptionsProvider" /> <!-- Version < 3.0. DeX Mode and Screen Mirroring support -->
+            android:value="com.dekidea.hearact.playback.cast.CastOptionsProvider" /> <!-- Version < 3.0. DeX Mode and Screen Mirroring support -->
         <meta-data
             android:name="com.samsung.android.keepalive.density"
             android:value="true" /> <!-- Version >= 3.0. DeX Dual Mode support -->
@@ -83,7 +83,7 @@
             android:value="true" />
 
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="com.dekidea.hearact.activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name">
@@ -102,7 +102,7 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.dekidea.hearact.activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|density|uiMode|keyboard|navigation"
             android:exported="true"
             android:label="@string/app_name"
@@ -124,25 +124,25 @@
                     android:scheme="https" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.tuneurl.podcastplayer.intents.MAIN_ACTIVITY" />
+                <action android:name="com.dekidea.hearact.intents.MAIN_ACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.DownloadAuthenticationActivity"
+            android:name="com.dekidea.hearact.activity.DownloadAuthenticationActivity"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.AntennaPod.Dark.Translucent" />
         <activity
-            android:name=".activity.PreferenceActivity"
+            android:name="com.dekidea.hearact.activity.PreferenceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/settings_label">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tuneurl.podcastplayer.activity.MainActivity" />
+                android:value="com.dekidea.hearact.activity.MainActivity" />
         </activity>
         <activity
-            android:name=".activity.WidgetConfigActivity"
+            android:name="com.dekidea.hearact.activity.WidgetConfigActivity"
             android:exported="true"
             android:label="@string/widget_settings">
             <intent-filter>
@@ -151,12 +151,12 @@
         </activity>
 
         <receiver
-            android:name=".core.receiver.PlayerWidget"
+            android:name="com.dekidea.hearact.core.receiver.PlayerWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.tuneurl.podcastplayer.FORCE_WIDGET_UPDATE" />
-                <action android:name="com.tuneurl.podcastplayer.STOP_WIDGET_UPDATE" />
+                <action android:name="com.dekidea.hearact.FORCE_WIDGET_UPDATE" />
+                <action android:name="com.dekidea.hearact.STOP_WIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -164,9 +164,9 @@
                 android:resource="@xml/player_widget_info" />
         </receiver>
 
-        <activity android:name=".activity.StorageErrorActivity"></activity>
+        <activity android:name="com.dekidea.hearact.activity.StorageErrorActivity"></activity>
         <activity
-            android:name=".activity.OpmlImportActivity"
+            android:name="com.dekidea.hearact.activity.OpmlImportActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:label="@string/opml_import_label">
@@ -190,37 +190,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.BugReportActivity"
+            android:name="com.dekidea.hearact.activity.BugReportActivity"
             android:label="@string/bug_report_title">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tuneurl.podcastplayer.activity.PreferenceActivity" />
+                android:value="com.dekidea.hearact.activity.PreferenceActivity" />
         </activity>
         <activity
-            android:name=".activity.VideoplayerActivity"
+            android:name="com.dekidea.hearact.activity.VideoplayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tuneurl.podcastplayer.activity.MainActivity" />
+                android:value="com.dekidea.hearact.activity.MainActivity" />
 
             <intent-filter>
-                <action android:name="com.tuneurl.podcastplayer.intents.VIDEO_PLAYER" />
+                <action android:name="com.dekidea.hearact.intents.VIDEO_PLAYER" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.OnlineFeedViewActivity"
+            android:name="com.dekidea.hearact.activity.OnlineFeedViewActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/add_feed_label"
             android:theme="@style/Theme.AntennaPod.Dark.Translucent">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tuneurl.podcastplayer.activity.MainActivity" />
+                android:value="com.dekidea.hearact.activity.MainActivity" />
 
             <!-- URLs ending with '.xml' or '.rss' -->
             <intent-filter>
@@ -326,7 +326,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SelectSubscriptionActivity"
+            android:name="com.dekidea.hearact.activity.SelectSubscriptionActivity"
             android:exported="true"
             android:icon="@drawable/ic_folder_shortcut"
             android:label="@string/shortcut_subscription_label"
@@ -337,14 +337,14 @@
         </activity>
 
         <receiver
-            android:name=".receiver.ConnectivityActionReceiver"
+            android:name="com.dekidea.hearact.receiver.ConnectivityActionReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.PowerConnectionReceiver"
+            android:name="com.dekidea.hearact.receiver.PowerConnectionReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
@@ -352,10 +352,10 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.SPAReceiver"
+            android:name="com.dekidea.hearact.receiver.SPAReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.tuneurl.podcastplayer.intent.SP_APPS_QUERY_FEEDS_RESPONSE" />
+                <action android:name="com.dekidea.hearact.intent.SP_APPS_QUERY_FEEDS_RESPONSE" />
             </intent-filter>
         </receiver>
 

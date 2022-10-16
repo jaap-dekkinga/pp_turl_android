@@ -1,4 +1,4 @@
-package com.tuneurl.podcastplayer.dialog;
+package com.dekidea.hearact.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.tuneurl.podcastplayer.core.util.IntentUtils;
+import com.dekidea.hearact.core.util.IntentUtils;
 
-import com.tuneurl.podcastplayer.R;
+import com.dekidea.hearact.R;
 
 public class RatingDialog {
 
@@ -62,7 +62,7 @@ public class RatingDialog {
         if (context == null) {
             return;
         }
-        IntentUtils.openInBrowser(context, "https://play.google.com/store/apps/details?id=com.tuneurl.podcastplayer");
+        IntentUtils.openInBrowser(context, "https://play.google.com/store/apps/details?id=com.dekidea.hearact");
         saveRated();
     }
 
