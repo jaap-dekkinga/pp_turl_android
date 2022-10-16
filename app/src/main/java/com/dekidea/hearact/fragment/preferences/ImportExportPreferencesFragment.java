@@ -28,7 +28,7 @@ import com.dekidea.hearact.core.export.html.HtmlWriter;
 import com.dekidea.hearact.core.export.opml.OpmlWriter;
 import com.dekidea.hearact.core.storage.DatabaseExporter;
 import com.google.android.material.snackbar.Snackbar;
-import com.dekidea.hearact.PodcastApp;
+import com.dekidea.hearact.App;
 import com.dekidea.hearact.R;
 import com.dekidea.hearact.activity.OpmlImportActivity;
 import com.dekidea.hearact.asynctask.DocumentFileExportWorker;
@@ -189,7 +189,7 @@ public class ImportExportPreferencesFragment extends PreferenceFragmentCompat {
         builder.setTitle(R.string.successful_import_label);
         builder.setMessage(R.string.import_ok);
         builder.setCancelable(false);
-        builder.setPositiveButton(android.R.string.ok, (dialogInterface, i) -> PodcastApp.forceRestart());
+        builder.setPositiveButton(android.R.string.ok, (dialogInterface, i) -> App.forceRestart());
         builder.show();
     }
 

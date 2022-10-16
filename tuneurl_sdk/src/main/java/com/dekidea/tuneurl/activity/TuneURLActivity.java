@@ -137,8 +137,6 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
             if (ACTION_POLL.equals(action)) {
 
                 TuneURLManager.postPollAnswer(this, user_response, apiData.getDescription(), apiData.getDate());
-
-                //TuneURLManager.startScanning(this);
             }
             else {
 
@@ -147,16 +145,12 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
                     if (ACTION_SAVE_PAGE.equals(action)) {
 
                         saveInfo(apiData);
-
-                        //TuneURLManager.startScanning(this);
                     }
                     else if (ACTION_OPEN_PAGE.equals(action)) {
 
                         TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
 
                         openPage( apiData);
-
-                        //TuneURLManager.startScanning(this);
                     }
                     else if (ACTION_PHONE.equals(action)) {
 
@@ -180,18 +174,18 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
                     }
                     else {
 
-                        //TuneURLManager.startScanning(this);
+
+                    }
+
+                    if(!ACTION_PHONE.equals(action)){
+
+                        this.finish();
                     }
                 }
                 else {
 
-                    //TuneURLManager.startScanning(this);
+                    this.finish();
                 }
-            }
-
-            if(!ACTION_PHONE.equals(action)){
-
-                this.finish();
             }
         }
         else{

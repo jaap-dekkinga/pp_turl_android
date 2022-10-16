@@ -50,7 +50,7 @@
     </Match>
     <Match>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
-        <Class name="com.dekidea.hearact.PodcastApp"/>
+        <Class name="com.dekidea.hearact.App"/>
     </Match>
     <Match>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>

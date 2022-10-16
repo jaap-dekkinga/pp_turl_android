@@ -9,10 +9,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.ListFragment;
 
+import com.dekidea.hearact.activity.MainActivity;
 import com.dekidea.hearact.core.util.IntentUtils;
 
 import com.dekidea.hearact.R;
-import com.dekidea.hearact.activity.PreferenceActivity;
 import com.dekidea.hearact.adapter.SimpleIconListAdapter;
 
 import io.reactivex.Single;
@@ -124,6 +124,6 @@ public class LicensesFragment extends ListFragment {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.licenses);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.licenses));
     }
 }

@@ -7,13 +7,13 @@ import android.content.Intent;
 
 import com.dekidea.hearact.activity.StorageErrorActivity;
 import com.dekidea.hearact.core.ApplicationCallbacks;
-import com.dekidea.hearact.PodcastApp;
+import com.dekidea.hearact.App;
 
 public class ApplicationCallbacksImpl implements ApplicationCallbacks {
 
     @Override
     public Application getApplicationInstance() {
-        return PodcastApp.getInstance();
+        return App.getInstance();
     }
 
     @Override

@@ -7,11 +7,11 @@ import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.dekidea.hearact.BuildConfig;
+import com.dekidea.hearact.activity.MainActivity;
 import com.dekidea.hearact.core.util.IntentUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.dekidea.hearact.R;
-import com.dekidea.hearact.activity.PreferenceActivity;
 
 public class AboutFragment extends PreferenceFragmentCompat {
 
@@ -31,7 +31,7 @@ public class AboutFragment extends PreferenceFragmentCompat {
         });
         findPreference("about_contributors").setOnPreferenceClickListener((preference) -> {
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.settingsContainer, new ContributorsPagerFragment())
+                    .replace(R.id.main_view, new ContributorsPagerFragment())
                     .addToBackStack(getString(R.string.contributors)).commit();
             return true;
         });
@@ -41,7 +41,7 @@ public class AboutFragment extends PreferenceFragmentCompat {
         });
         findPreference("about_licenses").setOnPreferenceClickListener((preference) -> {
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.settingsContainer, new LicensesFragment())
+                    .replace(R.id.main_view, new LicensesFragment())
                     .addToBackStack(getString(R.string.translators)).commit();
             return true;
         });
@@ -50,6 +50,6 @@ public class AboutFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((PreferenceActivity) getActivity()).getSupportActionBar().setTitle(R.string.about_pref);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.about_pref));
     }
 }

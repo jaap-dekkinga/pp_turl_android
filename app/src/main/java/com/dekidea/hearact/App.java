@@ -19,7 +19,7 @@ import com.dekidea.hearact.spa.SPAUtil;
 import org.greenrobot.eventbus.EventBus;
 
 /** Main application class. */
-public class PodcastApp extends MultiDexApplication {
+public class App extends MultiDexApplication {
 
     // make sure that ClientConfigurator executes its static code
     static {
@@ -30,9 +30,9 @@ public class PodcastApp extends MultiDexApplication {
         }
     }
 
-    private static PodcastApp singleton;
+    private static App singleton;
 
-    public static PodcastApp getInstance() {
+    public static App getInstance() {
         return singleton;
     }
 
