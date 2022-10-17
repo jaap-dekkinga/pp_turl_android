@@ -4,13 +4,6 @@ public interface Constants {
 
     public static final String SETTING_TRIGGER_FILE_PATH = "com.dekidea.tuneurl.SETTING_TRIGGER_FILE_PATH";
     public static final String SETTING_SOUND_THRESHOLD = "com.dekidea.tuneurl.SETTING_SOUND_THRESHOLD";
-    public static final String SETTING_RUNNING_STATE= "com.dekidea.tuneurl.SETTING_RUNNING_STATE";
-    public static final int SETTING_RUNNING_STATE_STOPPED = 0;
-    public static final int SETTING_RUNNING_STATE_STARTED = 1;
-    public static final String SETTING_LISTENING_STATE= "com.dekidea.tuneurl.SETTING_LISTENING_STATE";
-    public static final int SETTING_LISTENING_STATE_STOPPED = 0;
-    public static final int SETTING_LISTENING_STATE_STARTED = 1;
-
 
     public static final String SHARED_PREFERENCES = "com.dekidea.tuneurl.SHARED_PREFERENCES";
 

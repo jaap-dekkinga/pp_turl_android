@@ -54,12 +54,6 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
                             return true;
                         });
 
-        findPreference(UserPreferences.PREF_HIDDEN_DRAWER_ITEMS)
-                .setOnPreferenceClickListener(preference -> {
-                    showDrawerPreferencesDialog();
-                    return true;
-                });
-
         findPreference(UserPreferences.PREF_COMPACT_NOTIFICATION_BUTTONS)
                 .setOnPreferenceClickListener(preference -> {
                     showNotificationButtonsDialog();

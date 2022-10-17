@@ -216,7 +216,9 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
 
     @Override
     public boolean onUnbind(Intent intent) {
+
         Log.d(TAG, "Received onUnbind event");
+
         return super.onUnbind(intent);
     }
 
@@ -333,7 +335,9 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
+
         Log.d(TAG, "Service is about to be destroyed");
 
         TuneURLManager.stopTuneURLService(getApplicationContext());
@@ -914,6 +918,7 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
 
                     mediaUrl = playable.getStreamUrl();
                 }
+
                 TuneURLManager.startScanning(getApplicationContext(),
                         mediaUrl,
                         (long) mediaPlayer.getPosition() * 1000L);
@@ -956,9 +961,9 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
 
         @Override
         public void onPlaybackEnded(MediaType mediaType, boolean stopPlaying) {
+
             PlaybackService.this.onPlaybackEnded(mediaType, stopPlaying);
 
-            System.out.println("onPlaybackEnded()");
             TuneURLManager.stopScanning(getApplicationContext());
         }
 
@@ -1059,7 +1064,9 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
      * Set of instructions to be performed when playback ends.
      */
     private void onPlaybackEnded(MediaType mediaType, boolean stopPlaying) {
+
         Log.d(TAG, "Playback ended");
+
         PlaybackPreferences.clearCurrentlyPlayingTemporaryPlaybackSpeed();
         if (stopPlaying) {
             taskManager.cancelPositionSaver();
@@ -1287,15 +1294,15 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
             // This would give the PIP of videos a play button
             capabilities = capabilities | PlaybackStateCompat.ACTION_PLAY;
             if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_WATCH) {
-                WearMediaSession.sessionStateAddActionForWear(sessionState,
+                com.dekidea.hearact.core.service.playback.WearMediaSession.sessionStateAddActionForWear(sessionState,
                         CUSTOM_ACTION_REWIND,
                         getString(R.string.rewind_label),
                         android.R.drawable.ic_media_rew);
-                WearMediaSession.sessionStateAddActionForWear(sessionState,
+                com.dekidea.hearact.core.service.playback.WearMediaSession.sessionStateAddActionForWear(sessionState,
                         CUSTOM_ACTION_FAST_FORWARD,
                         getString(R.string.fast_forward_label),
                         android.R.drawable.ic_media_ff);
-                WearMediaSession.mediaSessionSetExtraForWear(mediaSession);
+                com.dekidea.hearact.core.service.playback.WearMediaSession.mediaSessionSetExtraForWear(mediaSession);
             }
         }
 

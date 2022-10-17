@@ -43,7 +43,7 @@ public class AutoDownloadPreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.pref_automatic_download_title);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.pref_automatic_download_title));
     }
 
     @Override

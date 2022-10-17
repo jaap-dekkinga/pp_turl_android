@@ -50,6 +50,7 @@ public class TuneURLService extends Service implements Constants {
 
 	private Context mContext;
 
+	private byte[] referenceTriggerArray = null;
 	private ByteBuffer referenceTriggerByteBuffer = null;
 
 	private byte[] windowByteArray = null;
@@ -82,6 +83,8 @@ public class TuneURLService extends Service implements Constants {
 	private int frameCounter = 0;
 	private long lastSearchTime = 0;
 
+	private static boolean isRunning = false;
+
 	static {
 
 		System.loadLibrary("native-lib");
@@ -98,7 +101,6 @@ public class TuneURLService extends Service implements Constants {
 		initializeResources();
 	}
 
-	byte[] referenceTriggerArray;
 
 	private void initializeResources(){
 
@@ -177,9 +179,30 @@ public class TuneURLService extends Service implements Constants {
 
 		super.onStartCommand(intent, flags, startId);
 
+		System.out.println("TuneURLService.onStartCommand()");
+
 		WakeLocker.acquirePartialWakeLock(this.getApplicationContext());
 
 		startService();
+
+		try {
+
+			int action = intent.getIntExtra(TUNEURL_ACTION, -1);
+
+			if (action == ACTION_START_SCANNING) {
+
+				String path = intent.getStringExtra("path");
+				long positionUs = intent.getLongExtra("positionUs", 0);
+
+				startScanning(path, positionUs);
+			}
+		}
+		catch (Exception e){
+
+			e.printStackTrace();
+		}
+
+		isRunning = true;
 
 		return Service.START_STICKY;
 	}
@@ -190,6 +213,8 @@ public class TuneURLService extends Service implements Constants {
 
 		super.onDestroy();
 
+		isRunning = false;
+
 		stopService();
 	}
 
@@ -197,8 +222,6 @@ public class TuneURLService extends Service implements Constants {
 	private void startService() {
 
 		runAsForeground();
-		
-		TuneURLManager.updateIntSetting(mContext, SETTING_RUNNING_STATE, SETTING_RUNNING_STATE_STARTED);
 	}
 
 
@@ -241,38 +264,11 @@ public class TuneURLService extends Service implements Constants {
 
 		releaseResources();
 
-		TuneURLManager.updateIntSetting(mContext, SETTING_LISTENING_STATE, Constants.SETTING_LISTENING_STATE_STOPPED);
-
 		WakeLocker.release();
 	}
 
 
-	class ListenerActionReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			if (intent != null) {
-
-				int action = intent.getIntExtra(TUNEURL_ACTION, -1);
-
-				if(action == ACTION_START_SCANNING){
-
-					String path = intent.getStringExtra("path");
-					long positionUs = intent.getLongExtra("positionUs", 0);
-
-					startListening(path, positionUs);
-				}
-				else if(action == ACTION_STOP_SCANNING){
-
-					stopListening();
-				}
-			}
-		}
-	}
-
-
-	private void startListening(final String path, final long positionUs){
+	private void startScanning(final String path, final long positionUs){
 
 		try {
 
@@ -338,8 +334,6 @@ public class TuneURLService extends Service implements Constants {
 							e.printStackTrace();
 						}
 
-						System.out.println("numChannels =" + numChannels);
-
 						initializeBuffers(sampleRate, numChannels);
 
 						this.mediaExtractor.selectTrack(i);
@@ -368,12 +362,7 @@ public class TuneURLService extends Service implements Constants {
 
 	private void initializeBuffers(int sampleRate, int numChannels){
 
-		System.out.println("initializeBuffers(): sampleRate = " + sampleRate);
-
-		//int triggerByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * numChannels * (double)(TRIGGER_SIZE_MILLIS / 1000d));
 		int triggerByteBufferSize = (int)((double)sampleRate * ((double)CHANNEL_BPS / 8d) * 2 * (double)(TRIGGER_SIZE_MILLIS / 1000d));
-
-		System.out.println("triggerByteBufferSize = " + triggerByteBufferSize);
 
 		triggerByteBuffer = ByteBuffer.allocateDirect(triggerByteBufferSize);
 		triggerByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -474,13 +463,13 @@ public class TuneURLService extends Service implements Constants {
 
 							case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
 
-								System.out.println("INFO_OUTPUT_FORMAT_CHANGED");
+								//System.out.println("INFO_OUTPUT_FORMAT_CHANGED");
 
 								break;
 
 							case MediaCodec.INFO_TRY_AGAIN_LATER:
 
-								System.out.println("INFO_TRY_AGAIN_LATER");
+								//System.out.println("INFO_TRY_AGAIN_LATER");
 
 								break;
 
@@ -525,8 +514,6 @@ public class TuneURLService extends Service implements Constants {
 
 	private void writeData(ByteBuffer outputBuffer){
 
-		//System.out.println("TuneURLService.writeData()");
-
 		if(numChannels == 1) {
 
 			byte[] stereo = convertToStereo(outputBuffer);
@@ -547,8 +534,6 @@ public class TuneURLService extends Service implements Constants {
 
 
 	private void checkData(ByteBuffer outputBuffer){
-
-		//System.out.println("TuneURLService.checkData()");
 
 		if (recordTuneUrl) {
 
@@ -667,15 +652,17 @@ public class TuneURLService extends Service implements Constants {
 	}
 
 
-	private void stopListening(){
+	private void stopScanning(){
 
-		System.out.println("TuneURLService.stopListening()");
+		System.out.println("TuneURLService.stopScanning()");
 
 		isPlaying = false;
 	}
 
 
 	private void releaseResources(){
+
+		System.out.println("TuneURLService.releaseResources()");
 
 		isPlaying = false;
 
@@ -694,8 +681,6 @@ public class TuneURLService extends Service implements Constants {
 	
 
 	private void checkTriggerFingerprint() {
-
-		//System.out.println("TuneURLService.checkTriggerFingerprint()");
 
 		Resample resample = null;
 
@@ -749,8 +734,6 @@ public class TuneURLService extends Service implements Constants {
 
 	private void searchTuneUrlFingerprint(){
 
-		System.out.println("TuneURLService.searchTuneUrlFingerprint()");
-
 		Resample resample = null;
 
 		try {
@@ -785,6 +768,7 @@ public class TuneURLService extends Service implements Constants {
 
 					monoAudio = null;
 
+					/*
 					try {
 
 						System.out.println("fingerprint_string_1 = " + fingerprint_string.substring(0, 3500));
@@ -794,6 +778,8 @@ public class TuneURLService extends Service implements Constants {
 
 						e.printStackTrace();
 					}
+
+					 */
 
 					searchFingerprint(fingerprint_string);
 				}
@@ -913,6 +899,37 @@ public class TuneURLService extends Service implements Constants {
 		startService(i);
 
 		lastSearchTime = Calendar.getInstance().getTimeInMillis();
+	}
+
+
+	public static boolean isRunning(){
+
+		return isRunning;
+	}
+
+
+	class ListenerActionReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			if (intent != null) {
+
+				int action = intent.getIntExtra(TUNEURL_ACTION, -1);
+
+				if(action == ACTION_START_SCANNING){
+
+					String path = intent.getStringExtra("path");
+					long positionUs = intent.getLongExtra("positionUs", 0);
+
+					startScanning(path, positionUs);
+				}
+				else if(action == ACTION_STOP_SCANNING){
+
+					stopScanning();
+				}
+			}
+		}
 	}
 
 

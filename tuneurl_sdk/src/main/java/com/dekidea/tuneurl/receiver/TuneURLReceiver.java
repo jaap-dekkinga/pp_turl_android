@@ -188,12 +188,12 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
 
     private void startTuneURLActivity(Context context, APIData apiData){
 
-        Intent intent = new Intent(context, TuneURLActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(), TuneURLActivity.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(APIDATA, apiData);
 
-        context.startActivity(intent);
+        context.getApplicationContext().startActivity(intent);
     }
 }
 

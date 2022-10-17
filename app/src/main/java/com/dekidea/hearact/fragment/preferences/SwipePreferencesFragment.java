@@ -12,7 +12,6 @@ import com.dekidea.hearact.fragment.QueueFragment;
 
 public class SwipePreferencesFragment extends PreferenceFragmentCompat {
     private static final String PREF_SWIPE_QUEUE = "prefSwipeQueue";
-    private static final String PREF_SWIPE_INBOX = "prefSwipeInbox";
     private static final String PREF_SWIPE_DOWNLOADS = "prefSwipeDownloads";
     private static final String PREF_SWIPE_FEED = "prefSwipeFeed";
 
@@ -22,10 +21,6 @@ public class SwipePreferencesFragment extends PreferenceFragmentCompat {
 
         findPreference(PREF_SWIPE_QUEUE).setOnPreferenceClickListener(preference -> {
             new SwipeActionsDialog(requireContext(), QueueFragment.TAG).show(() -> { });
-            return true;
-        });
-        findPreference(PREF_SWIPE_INBOX).setOnPreferenceClickListener(preference -> {
-            new SwipeActionsDialog(requireContext(), InboxFragment.TAG).show(() -> { });
             return true;
         });
         findPreference(PREF_SWIPE_DOWNLOADS).setOnPreferenceClickListener(preference -> {
@@ -41,7 +36,7 @@ public class SwipePreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.swipeactions_label);
+        ((MainActivity) getActivity()).setSelectedFragmentTitle(getString(R.string.swipeactions_label));
     }
 
 }

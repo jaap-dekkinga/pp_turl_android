@@ -2,6 +2,7 @@ package com.dekidea.tuneurl.util;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,8 +41,6 @@ public class TuneURLManager implements Constants{
 
         System.out.println("TuneURLManager.startTuneURLService()");
 
-        TuneURLManager.updateIntSetting(context, SETTING_LISTENING_STATE, SETTING_LISTENING_STATE_STARTED);
-
         try {
 
             Intent i = new Intent(context, TuneURLService.class);
@@ -66,8 +65,6 @@ public class TuneURLManager implements Constants{
 
         System.out.println("TuneURLManager.stopTuneURLService()");
 
-        TuneURLManager.updateIntSetting(context, SETTING_LISTENING_STATE, SETTING_LISTENING_STATE_STOPPED);
-
         try {
 
             Intent i = new Intent(context, TuneURLService.class);
@@ -85,18 +82,44 @@ public class TuneURLManager implements Constants{
 
         System.out.println("TuneURLManager.startScanning()");
 
-        try {
+        if(!TuneURLService.isRunning()){
 
-            Intent i = new Intent();
-            i.setAction(LISTENING_ACTION);
-            i.putExtra(TUNEURL_ACTION, ACTION_START_SCANNING);
-            i.putExtra("path", path);
-            i.putExtra("positionUs", positionUs);
-            context.sendBroadcast(i);
+            try {
+
+                Intent i = new Intent(context, TuneURLService.class);
+
+                i.putExtra(TUNEURL_ACTION, ACTION_START_SCANNING);
+                i.putExtra("path", path);
+                i.putExtra("positionUs", positionUs);
+
+                if (Build.VERSION.SDK_INT > 25) {
+
+                    context.startForegroundService(i);
+                }
+                else{
+
+                    context.startService(i);
+                }
+            }
+            catch(Exception e){
+
+                e.printStackTrace();
+            }
         }
-        catch (Exception e){
+        else {
 
-            e.printStackTrace();
+            try {
+
+                Intent i = new Intent();
+                i.setAction(LISTENING_ACTION);
+                i.putExtra(TUNEURL_ACTION, ACTION_START_SCANNING);
+                i.putExtra("path", path);
+                i.putExtra("positionUs", positionUs);
+                context.sendBroadcast(i);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
         }
     }
 
