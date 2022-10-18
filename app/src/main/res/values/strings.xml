@@ -50,4 +50,21 @@
     </plurals>
 
 
+
+    <string name="permissions_record_audio">Record audio</string>
+    <string name="permissions_storage">Storage</string>
+    <string name="permissions_wake_lock">Wake device</string>
+    <string name="permissions_internet">Internet</string>
+    <string name="permissions_access_network_state">Network state</string>
+    <string name="permissions_boot_completed">Boot completed</string>
+    <string name="permissions_call_phone">Call phone</string>
+    <string name="permissions_ignore_battery_optimizations">Ignore battery optimizations</string>
+    <string name="permissions_system_alert_window">Draw over other apps</string>
+
+    <string name="alert_permissions_allow">Allow</string>
+    <string name="alert_permissions_deny">Deny</string>
+    <string name="alert_overlay_permission_title_1">needs your permission to be displayed over other apps, so you can quickly interact with it\n\n</string>
+    <string name="alert_overlay_permission_title_2">Allow </string>
+    <string name="alert_overlay_permission_title_3">to show over other apps?</string>
+
 </resources>

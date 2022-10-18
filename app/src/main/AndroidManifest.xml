@@ -174,13 +174,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dekidea.hearact.activity.BugReportActivity"
-            android:label="@string/bug_report_title">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dekidea.hearact.activity.PreferenceActivity" />
-        </activity>
-        <activity
             android:name="com.dekidea.hearact.activity.VideoplayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"

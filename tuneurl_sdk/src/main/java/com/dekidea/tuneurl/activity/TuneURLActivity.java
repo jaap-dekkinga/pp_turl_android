@@ -294,8 +294,6 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
         super.onRequestPermissionsResult(requestCode, permissions, results);
 
-        System.out.println("onRequestPermissionsResult(): " + requestCode + " | " + results[0]);
-
         switch (requestCode) {
 
             case REQUEST_PHONE_CALL: {

@@ -8,8 +8,8 @@ apply from: "../playFlavor.gradle"
 android {
     defaultConfig {
 
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.3"
 
         def commit = ""
         try {

@@ -1,22 +1,27 @@
 package com.dekidea.hearact.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -36,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bytehamster.lib.preferencesearch.SearchPreferenceResult;
 import com.bytehamster.lib.preferencesearch.SearchPreferenceResultListener;
+import com.dekidea.tuneurl.activity.TuneURLActivity;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.dekidea.hearact.adapter.NavListAdapter;
@@ -494,14 +501,22 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
 
     @Override
     protected void onResume() {
+
         super.onResume();
+
         StorageUtils.checkStorageAvailability(this);
+
         handleNavIntent();
-        //RatingDialog.check();
 
         if (lastTheme != UserPreferences.getNoTitleTheme()) {
+
             finish();
+
             startActivity(new Intent(this, MainActivity.class));
+        }
+        else{
+
+            checkNeedsPermissions();
         }
     }
 
@@ -891,5 +906,101 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
         String lastFragment = prefs.getString(PREF_LAST_FRAGMENT_TAG, QueueFragment.TAG);
         Log.d(TAG, "getLastNavFragment() -> " + lastFragment);
         return lastFragment;
+    }
+
+
+    private void checkNeedsPermissions() {
+
+        if(!android.provider.Settings.canDrawOverlays(this)){
+
+            alertNeedsOverlayPermission();
+        }
+        /*
+        else if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    REQUEST_PHONE_CALL_PERMISSION);
+        }
+
+         */
+    }
+
+    private android.app.AlertDialog overlayPermissionAlert;
+    private void alertNeedsOverlayPermission() {
+
+        if(overlayPermissionAlert == null) {
+
+            android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(this, R.style.CustomAlertDialog);
+
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LinearLayout mainLayout = (LinearLayout) inflater.inflate(R.layout.alert_overlay_permission_view, null);
+
+            String title = " <b>" + getString(com.dekidea.tuneurl.R.string.app_name) + " </b> " +
+                    getString(R.string.alert_overlay_permission_title_1) + "<br><br>" +
+                    getString(R.string.alert_overlay_permission_title_2) +
+                    " <b>" + getString(com.dekidea.tuneurl.R.string.app_name) + "</b> " +
+                    getString(R.string.alert_overlay_permission_title_3);
+
+            TextView text_title = (TextView) mainLayout.getChildAt(0);
+            text_title.setText(Html.fromHtml(title));
+
+            TextView button_allow = (TextView) mainLayout.getChildAt(2);
+            button_allow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    overlayPermissionAlert.dismiss();
+
+                    overlayPermissionAlert = null;
+
+                    Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:" + getPackageName()));
+
+                    startActivity(intent);
+                }
+            });
+
+            TextView button_deny = (TextView) mainLayout.getChildAt(4);
+            button_deny.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    overlayPermissionAlert.dismiss();
+
+                    overlayPermissionAlert = null;
+                }
+            });
+
+            overlayPermissionAlert = alertBuilder.create();
+
+            overlayPermissionAlert.setView(mainLayout);
+            //overlayPermissionAlert.setCancelable(false);
+            overlayPermissionAlert.show();
+        }
+    }
+
+    private static final int REQUEST_PHONE_CALL_PERMISSION = 1234;
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] results) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+
+        switch (requestCode) {
+
+            case REQUEST_PHONE_CALL_PERMISSION: {
+
+                if (results != null &&
+                        results.length > 0 &&
+                        results[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                }
+
+                return;
+            }
+        }
     }
 }

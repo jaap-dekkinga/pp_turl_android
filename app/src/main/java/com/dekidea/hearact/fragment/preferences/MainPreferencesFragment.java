@@ -1,30 +1,16 @@
 package com.dekidea.hearact.fragment.preferences;
 
-import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.bytehamster.lib.preferencesearch.SearchConfiguration;
 import com.bytehamster.lib.preferencesearch.SearchPreference;
 import com.dekidea.hearact.activity.MainActivity;
-import com.dekidea.hearact.core.util.IntentUtils;
 import com.dekidea.hearact.fragment.preferences.about.AboutFragment;
 
 import com.dekidea.hearact.R;
-import com.dekidea.hearact.activity.BugReportActivity;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 public class MainPreferencesFragment extends PreferenceFragmentCompat {
 
@@ -89,36 +75,6 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
                     return true;
                 }
         );
-        findPreference(PREF_DOCUMENTATION).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), getLocalizedWebsiteLink() + "/documentation/");
-            return true;
-        });
-        findPreference(PREF_VIEW_FORUM).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), "https://forum.antennapod.org/");
-            return true;
-        });
-        findPreference(PREF_CONTRIBUTE).setOnPreferenceClickListener(preference -> {
-            IntentUtils.openInBrowser(getContext(), getLocalizedWebsiteLink() + "/contribute/");
-            return true;
-        });
-        findPreference(PREF_SEND_BUG_REPORT).setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(getActivity(), BugReportActivity.class));
-            return true;
-        });
-    }
-
-    private String getLocalizedWebsiteLink() {
-        try (InputStream is = getContext().getAssets().open("website-languages.txt")) {
-            String[] languages = IOUtils.toString(is, StandardCharsets.UTF_8.name()).split("\n");
-            String deviceLanguage = Locale.getDefault().getLanguage();
-            if (ArrayUtils.contains(languages, deviceLanguage) && !"en".equals(deviceLanguage)) {
-                return "https://antennapod.org/" + deviceLanguage;
-            } else {
-                return "https://antennapod.org";
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void setupSearch() {
