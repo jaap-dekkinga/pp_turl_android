@@ -49,6 +49,9 @@
             android:name="com.dekidea.tuneurl.activity.TuneURLActivity"
             android:exported="false" />
         <activity
+            android:name="com.dekidea.tuneurl.activity.CYOAActivity"
+            android:exported="false" />
+        <activity
             android:name="com.dekidea.hearact.activity.PlaybackSpeedDialogActivity"
             android:excludeFromRecents="true"
             android:exported="false"

@@ -24,8 +24,11 @@ import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TuneURLManager;
 import com.dekidea.tuneurl.util.WakeLocker;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -61,6 +64,7 @@ public class TuneURLService extends Service implements Constants {
 	private ByteBuffer resampledTuneUrlByteBuffer = null;
 	private int tuneUrlWaveLenght;
 	private float mSimilarity;
+	private float mLastSimilarity;
 
 
 	private boolean recordTuneUrl = false;
@@ -135,6 +139,7 @@ public class TuneURLService extends Service implements Constants {
 			registerReceiver(mListenerActionReceiver, mListenerActionFilter);
 
 			mSimilarity = 0;
+			mLastSimilarity = 0;
 		}
 		catch (Exception e){
 
@@ -703,11 +708,16 @@ public class TuneURLService extends Service implements Constants {
 
 				mSimilarity = getSimilarity(referenceTriggerByteBuffer, (int)(FINGERPRINT_TRIGGER_BUFFER_SIZE/2), resampledTriggerByteBuffer, (int)(FINGERPRINT_TRIGGER_BUFFER_SIZE/2));
 
-				System.out.println("TuneURL - similarity: " + mSimilarity);
+				System.out.println("TuneURL - similarity: " + String.format("%.2f",mSimilarity));
 
-				if (mSimilarity > SIMILARITY_THRESHOLD) {
+				if (mSimilarity > SIMILARITY_THRESHOLD && mSimilarity <= mLastSimilarity) {
 
+					mLastSimilarity = 0;
 					recordTuneUrl = true;
+				}
+				else{
+
+					mLastSimilarity = mSimilarity;
 				}
 			}
 		}

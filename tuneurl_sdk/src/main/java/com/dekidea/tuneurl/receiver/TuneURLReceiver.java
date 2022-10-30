@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.dekidea.tuneurl.activity.CYOAActivity;
 import com.dekidea.tuneurl.api.APIData;
+import com.dekidea.tuneurl.service.APIService;
 import com.dekidea.tuneurl.util.Constants;
 import com.dekidea.tuneurl.util.TimeUtils;
 import com.google.gson.JsonArray;
@@ -40,12 +42,23 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
                         e.printStackTrace();
                     }
                 }
+                else if(action.equals(GET_CYOA_RESULT_RECEIVED)){
+
+                    String tuneurl_id = intent.getStringExtra(TUNEURL_ID);
+                    String default_mp3_url = intent.getStringExtra(DEFAULT_MP3_URL);
+                    String result = intent.getStringExtra(TUNEURL_RESULT);
+
+                    startCYOAActivity(context, tuneurl_id, default_mp3_url, result);
+                }
+                else if(action.equals(GET_CYOA_RESULT_ERROR)){
+
+                    //Do something
+                }
                 else if(action.equals(SEARCH_FINGERPRINT_RESULT_ERROR)){
 
                     String error = intent.getStringExtra(TUNEURL_RESULT);
 
                     //Do something
-
 
                 }
                 else if(action.equals(ADD_RECORD_OF_INTEREST_RESULT_RECEIVED)){
@@ -53,7 +66,6 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
                     String result = intent.getStringExtra(TUNEURL_RESULT);
 
                     //Do something
-
 
                 }
                 else if(action.equals(ADD_RECORD_OF_INTEREST_RESULT_ERROR)){
@@ -160,7 +172,20 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
                         apiData.setDate(date);
                         apiData.setDateAbsolute(TimeUtils.getCurrentTimeInMillis());
 
-                        startTuneURLActivity(context, apiData);
+                        System.out.println("id: " + id);
+                        System.out.println("type: " + type);
+                        System.out.println("info: " + info);
+
+                        System.out.println("ACTION_CYOA.equals(type): " + ACTION_CYOA.equals(type));
+
+                        if(ACTION_CYOA.equals(type)){
+
+                            getCYOA(context, "" + id, info);
+                        }
+                        else{
+
+                            startTuneURLActivity(context, apiData);
+                        }
                     }
                     else {
 
@@ -186,6 +211,23 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
     }
 
 
+    private void startCYOAActivity(Context context,
+                                   String tuneurl_id,
+                                   String default_mp3_url,
+                                   String result){
+
+        Intent intent = new Intent(context.getApplicationContext(), CYOAActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.putExtra(TUNEURL_ID, tuneurl_id);
+        intent.putExtra(DEFAULT_MP3_URL, default_mp3_url);
+        intent.putExtra(TUNEURL_RESULT, result);
+
+        context.getApplicationContext().startActivity(intent);
+    }
+
+
     private void startTuneURLActivity(Context context, APIData apiData){
 
         Intent intent = new Intent(context.getApplicationContext(), TuneURLActivity.class);
@@ -194,6 +236,18 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
         intent.putExtra(APIDATA, apiData);
 
         context.getApplicationContext().startActivity(intent);
+    }
+
+
+    private void getCYOA(Context context, String tuneurl_id, String default_mp3_url){
+
+        Intent intent = new Intent(context.getApplicationContext(), APIService.class);
+
+        intent.putExtra(TUNEURL_ACTION, ACTION_GET_CYOA);
+        intent.putExtra(TUNEURL_ID, tuneurl_id);
+        intent.putExtra(DEFAULT_MP3_URL, default_mp3_url);
+
+        context.getApplicationContext().startService(intent);
     }
 }
 

@@ -11,6 +11,7 @@ public interface Constants {
     public static final String SETTING_SEARCH_FINGERPRINT_URL = "com.dekidea.tuneurl.SETTING_SEARCH_FINGERPRINT_URL";
     public static final String SETTING_POLL_API_URL = "com.dekidea.tuneurl.SETTING_POLL_API_URL";
     public static final String SETTING_INTERESTS_API_URL = "com.dekidea.tuneurl.SETTING_INTERESTS_API_URL";
+    public static final String SETTING_GET_CYOA_API_URL = "com.dekidea.tuneurl.SETTING_GET_CYOA_API_URL";
 
     public static final String TUNEURL_ACTION = "com.dekidea.tuneurl.TUNEURL_ACTION";
     public static final String LISTENING_ACTION = "com.dekidea.tuneurl.LISTENING_ACTION";
@@ -20,6 +21,9 @@ public interface Constants {
     public static final String POST_POLL_ANSWER_RESULT_ERROR = "com.dekidea.tuneurl.POST_POLL_ANSWER_RESULT_ERROR";
     public static final String ADD_RECORD_OF_INTEREST_RESULT_RECEIVED = "com.dekidea.tuneurl.ADD_RECORD_OF_INTEREST_RESULT_RECEIVED";
     public static final String ADD_RECORD_OF_INTEREST_RESULT_ERROR = "com.dekidea.tuneurl.ADD_RECORD_OF_INTEREST_RESULT_ERROR";
+    public static final String GET_CYOA_RESULT_RECEIVED = "com.dekidea.tuneurl.GET_CYOA_RESULT_RECEIVED";
+    public static final String GET_CYOA_RESULT_ERROR = "com.dekidea.tuneurl.GET_CYOA_RESULT_ERROR";
+
     public static final String TUNEURL_RESULT = "com.dekidea.tuneurl.TUNEURL_RESULT";
 
     public static final int ACTION_STOP_SCANNING = 1;
@@ -28,6 +32,7 @@ public interface Constants {
     public static final int ACTION_SEARCH_FINGERPRINT = 4;
     public static final int ACTION_ADD_RECORD_OF_INTEREST = 5;
     public static final int ACTION_POST_POLL_ANSWER = 6;
+    public static final int ACTION_GET_CYOA = 7;
 
 
     public static final String FINGERPRINT = "com.dekidea.tuneurl.FINGERPRINT";
@@ -37,6 +42,8 @@ public interface Constants {
     public static final String USER_RESPONSE = "com.dekidea.tuneurl.USER_RESPONSE";
     public static final String POLL_NAME = "com.dekidea.tuneurl.POLL_NAME";
     public static final String TIMESTAMP = "com.dekidea.tuneurl.TIMESTAMP";
+    public static final String TUNEURL_ID = "com.dekidea.tuneurl.TUNEURL_ID";
+    public static final String DEFAULT_MP3_URL = "com.dekidea.tuneurl.DEFAULT_MP3_URL";
 
     public static final String APIDATA = "com.dekidea.tuneurl.APIDATA";
 
@@ -49,6 +56,7 @@ public interface Constants {
     public static final String ACTION_POLL = "poll";
     public static final String ACTION_COUPON = "coupon";
     public static final String ACTION_MAP = "map";
+    public static final String ACTION_CYOA = "CYOA";
 
 
     public static final String INTEREST_ACTION_HEARD = "heard";

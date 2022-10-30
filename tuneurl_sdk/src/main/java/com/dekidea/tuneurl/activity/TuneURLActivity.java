@@ -144,6 +144,8 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
 
                     if (ACTION_SAVE_PAGE.equals(action)) {
 
+                        TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
+
                         saveInfo(apiData);
                     }
                     else if (ACTION_OPEN_PAGE.equals(action)) {
@@ -171,6 +173,11 @@ public class TuneURLActivity extends AppCompatActivity implements Constants {
                         TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
 
                         openPage( apiData);
+                    }
+                    else if (ACTION_CYOA.equals(action)) {
+
+                        TuneURLManager.addRecordOfInterest(this, String.valueOf(apiData.getId()), INTEREST_ACTION_ACTED, date);
+
                     }
                     else {
 

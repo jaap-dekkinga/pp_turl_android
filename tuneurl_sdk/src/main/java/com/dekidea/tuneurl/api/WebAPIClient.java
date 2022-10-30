@@ -28,6 +28,7 @@ public class WebAPIClient implements Constants {
     private String SEARCH_FINGERPRINT_URL;
     private String POLL_API_URL;
     private String INTERESTS_API_URL;
+    private String GET_CYOA_API_URL;
 
 
     public WebAPIClient(Context context) {
@@ -36,7 +37,7 @@ public class WebAPIClient implements Constants {
         SEARCH_FINGERPRINT_URL = TuneURLManager.fetchStringSetting(context, SETTING_SEARCH_FINGERPRINT_URL, "");
         POLL_API_URL = TuneURLManager.fetchStringSetting(context, SETTING_POLL_API_URL, "");
         INTERESTS_API_URL = TuneURLManager.fetchStringSetting(context, SETTING_INTERESTS_API_URL, "");
-
+        GET_CYOA_API_URL = TuneURLManager.fetchStringSetting(context, SETTING_GET_CYOA_API_URL, "");
 
         Gson gson = provideGson();
 
@@ -274,6 +275,82 @@ public class WebAPIClient implements Constants {
             JsonObject error = new JsonObject();
             error.addProperty("message", e.getMessage());
             broadcastError(context, POST_POLL_ANSWER_RESULT_ERROR, error.toString());
+        }
+    }
+
+
+    public void getCYOA(final Context context, String tuneurl_id, String default_mp3_url) {
+
+        try {
+
+            executor.execute(() -> {
+
+                webservice.getCYOA(GET_CYOA_API_URL, tuneurl_id).enqueue(new Callback<JsonArray>() {
+
+                    @Override
+                    public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+
+                        executor.execute(() -> {
+
+                            try {
+
+                                if (response.code() == 200) {
+
+                                    JsonArray result = response.body();
+
+                                    System.out.println(result.toString());
+
+                                    JsonObject jsonResult = new JsonObject();
+
+                                    jsonResult.addProperty(TUNEURL_ID, tuneurl_id);
+                                    jsonResult.addProperty(DEFAULT_MP3_URL, default_mp3_url);
+                                    jsonResult.add("result", result);
+
+                                    broadcastResult(context, GET_CYOA_RESULT_RECEIVED, jsonResult);
+                                }
+                                else {
+
+                                    JsonObject error = new JsonObject();
+
+                                    System.out.println("code" + response.code());
+                                    System.out.println("message" + response.message());
+
+                                    error.addProperty("code", response.code());
+                                    error.addProperty("message", response.message());
+
+                                    broadcastError(context, GET_CYOA_RESULT_ERROR, error.toString());
+                                }
+                            }
+                            catch (Exception e) {
+
+                                e.printStackTrace();
+
+                                JsonObject error = new JsonObject();
+                                error.addProperty("message", e.getMessage());
+                                broadcastError(context, GET_CYOA_RESULT_ERROR, error.toString());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonArray> call, Throwable t) {
+
+                        t.printStackTrace();
+
+                        JsonObject error = new JsonObject();
+                        error.addProperty("message", t.getMessage());
+                        broadcastError(context, GET_CYOA_RESULT_ERROR, error.toString());
+                    }
+                });
+            });
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+
+            JsonObject error = new JsonObject();
+            error.addProperty("message", e.getMessage());
+            broadcastError(context, GET_CYOA_RESULT_ERROR, error.toString());
         }
     }
 

@@ -1953,6 +1953,8 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
         intentFilter.addAction(ADD_RECORD_OF_INTEREST_RESULT_ERROR);
         intentFilter.addAction(POST_POLL_ANSWER_RESULT_RECEIVED);
         intentFilter.addAction(POST_POLL_ANSWER_RESULT_ERROR);
+        intentFilter.addAction(GET_CYOA_RESULT_RECEIVED);
+        intentFilter.addAction(GET_CYOA_RESULT_ERROR);
 
         registerReceiver(tuneURLReceiver, intentFilter);
     }

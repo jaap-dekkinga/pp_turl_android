@@ -1,5 +1,11 @@
 package com.dekidea.hearact.activity;
 
+import static com.dekidea.tuneurl.util.Constants.SETTING_GET_CYOA_API_URL;
+import static com.dekidea.tuneurl.util.Constants.SETTING_INTERESTS_API_URL;
+import static com.dekidea.tuneurl.util.Constants.SETTING_POLL_API_URL;
+import static com.dekidea.tuneurl.util.Constants.SETTING_SEARCH_FINGERPRINT_URL;
+import static com.dekidea.tuneurl.util.Constants.SETTING_TUNEURL_API_BASE_URL;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,10 +70,8 @@ public class SplashActivity extends AppCompatActivity {
     private static final String DEFAULT_SEARCH_FINGERPRINT_URL = "https://pnz3vadc52.execute-api.us-east-2.amazonaws.com/dev/search-fingerprint";
     private static final String DEFAULT_POLL_API_URL = "http://pollapiwebservice.us-east-2.elasticbeanstalk.com/api/pollapi";
     private static final String DEFAULT_INTERESTS_API_URL = "https://65neejq3c9.execute-api.us-east-2.amazonaws.com/interests";
-    private static final String SETTING_TUNEURL_API_BASE_URL = "com.dekidea.tuneurl.SETTING_TUNEURL_API_BASE_URL";
-    private static final String SETTING_SEARCH_FINGERPRINT_URL = "com.dekidea.tuneurl.SETTING_SEARCH_FINGERPRINT_URL";
-    private static final String SETTING_POLL_API_URL = "com.dekidea.tuneurl.SETTING_POLL_API_URL";
-    private static final String SETTING_INTERESTS_API_URL = "com.dekidea.tuneurl.SETTING_INTERESTS_API_URL";
+    //private static final String DEFAULT_GET_CYOA_API_URL = "https://65neejq3c9.execute-api.us-east-2.amazonaws.com/get-your-cyoa";
+    private static final String DEFAULT_GET_CYOA_API_URL = "https://pnz3vadc52.execute-api.us-east-2.amazonaws.com/dev/get-cyoa-mp3";
 
     private void initializeResources(){
 
@@ -79,6 +83,7 @@ public class SplashActivity extends AppCompatActivity {
             TuneURLManager.updateStringSetting(this, SETTING_SEARCH_FINGERPRINT_URL, DEFAULT_SEARCH_FINGERPRINT_URL);
             TuneURLManager.updateStringSetting(this, SETTING_POLL_API_URL, DEFAULT_POLL_API_URL);
             TuneURLManager.updateStringSetting(this, SETTING_INTERESTS_API_URL, DEFAULT_INTERESTS_API_URL);
+            TuneURLManager.updateStringSetting(this, SETTING_GET_CYOA_API_URL, DEFAULT_GET_CYOA_API_URL);
 
             reference_file_path = installReferenceWavFile(this, R.raw.trigger_audio, "trigger_audio.raw");
 

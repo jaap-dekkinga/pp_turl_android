@@ -68,6 +68,13 @@ public class APIService extends IntentService implements Constants {
 
 					webAPIClient.postPollAnswer(this, poll_name, user_response, timestamp);
 				}
+				else if (action == ACTION_GET_CYOA) {
+
+					String tuneurl_id = intent.getStringExtra(TUNEURL_ID);
+					String default_mp3_url = intent.getStringExtra(DEFAULT_MP3_URL);
+
+					webAPIClient.getCYOA(this, tuneurl_id, default_mp3_url);
+				}
 			}
 			catch (Exception e){
 
