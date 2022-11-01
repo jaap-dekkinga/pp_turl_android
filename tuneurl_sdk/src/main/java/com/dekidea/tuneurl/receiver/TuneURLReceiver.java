@@ -44,11 +44,9 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
                 }
                 else if(action.equals(GET_CYOA_RESULT_RECEIVED)){
 
-                    String tuneurl_id = intent.getStringExtra(TUNEURL_ID);
-                    String default_mp3_url = intent.getStringExtra(DEFAULT_MP3_URL);
                     String result = intent.getStringExtra(TUNEURL_RESULT);
 
-                    startCYOAActivity(context, tuneurl_id, default_mp3_url, result);
+                    startCYOAActivity(context, result);
                 }
                 else if(action.equals(GET_CYOA_RESULT_ERROR)){
 
@@ -211,17 +209,11 @@ public class TuneURLReceiver extends BroadcastReceiver  implements Constants {
     }
 
 
-    private void startCYOAActivity(Context context,
-                                   String tuneurl_id,
-                                   String default_mp3_url,
-                                   String result){
+    private void startCYOAActivity(Context context, String result){
 
         Intent intent = new Intent(context.getApplicationContext(), CYOAActivity.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        intent.putExtra(TUNEURL_ID, tuneurl_id);
-        intent.putExtra(DEFAULT_MP3_URL, default_mp3_url);
         intent.putExtra(TUNEURL_RESULT, result);
 
         context.getApplicationContext().startActivity(intent);

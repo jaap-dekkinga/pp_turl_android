@@ -2,13 +2,19 @@ package com.dekidea.tuneurl.activity;
 
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,17 +28,26 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class CYOAActivity extends AppCompatActivity implements Constants {
 
-    private static final long DEFAULT_CLOSE_INTERVAL = 3000L;
+    private static final long DEFAULT_PLAY_DELAY = 3000L;
 
     private LinearLayout optionsLayout;
+    private VideoView mediaplayerView;
 
-    private String tuneurl_id;
+    private long tuneurl_id;
     private String default_mp3_url;
+
+    private boolean playDefault;
+
+    private Handler handler;
+
+    private HashMap<String, CYOA> optionMap;
+    private HashMap<String, Button> buttonMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +69,16 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
 
         setContentView(R.layout.activity_cyoa_activity);
 
+        handler = new Handler();
+
+        optionMap = new HashMap<String, CYOA>();
+        buttonMap = new HashMap<String, Button>();
+
         optionsLayout = (LinearLayout) findViewById(R.id.optionsLayout);
+        mediaplayerView = (VideoView) findViewById(R.id.mediaplayerView);
 
         try{
 
-            tuneurl_id = getIntent().getStringExtra(TUNEURL_ID);
-            default_mp3_url = getIntent().getStringExtra(DEFAULT_MP3_URL);
             String result  = getIntent().getStringExtra(TUNEURL_RESULT);
 
             processCYOAResult(result);
@@ -76,7 +95,7 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
 
         super.onResume();
 
-        scheduleDefaultClose();
+        //scheduleDefaultClose();
     }
 
 
@@ -97,20 +116,20 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
                     @Override
                     public void run() {
 
-                        playFile(default_mp3_url);
+                        CYOAActivity.this.finish();
                     }
                 });
             }
         };
 
         Timer timer = new Timer();
-        timer.schedule(timerTask, DEFAULT_CLOSE_INTERVAL);
+        timer.schedule(timerTask, DEFAULT_PLAY_DELAY);
     }
 
 
     public void doAction(String user_response){
 
-        TuneURLManager.addRecordOfInterest(this, tuneurl_id, INTEREST_ACTION_ACTED, TimeUtils.getCurrentTimeAsFormattedString());
+        TuneURLManager.addRecordOfInterest(this, "" + tuneurl_id, INTEREST_ACTION_ACTED, TimeUtils.getCurrentTimeAsFormattedString());
 
         this.finish();
     }
@@ -123,6 +142,10 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
             ArrayList<CYOA> CYOAArray = new ArrayList<CYOA>();
 
             JsonObject object = new JsonParser().parse(result).getAsJsonObject();
+
+            tuneurl_id = object.get(TUNEURL_ID).getAsLong();
+            default_mp3_url = object.get(DEFAULT_MP3_URL).getAsString();
+
             JsonArray jsonArray = object.getAsJsonArray("result");
 
             if (jsonArray != null && jsonArray.size() > 0) {
@@ -133,19 +156,45 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
 
                         JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
 
-                        long tuneurl_id = jsonObject.get("tuneurl_id").getAsLong();
-                        String option = jsonObject.get("options").getAsString();
                         String mp3_url = jsonObject.get("mp3_url").getAsString();
 
-                        CYOA cyoa = new CYOA(tuneurl_id, option, mp3_url);
+                        if(URLUtil.isValidUrl(mp3_url)){
 
-                        CYOAArray.add(cyoa);
+                            long tuneurl_id = jsonObject.get("tuneurl_id").getAsLong();
+                            String option = jsonObject.get("options").getAsString();
+
+                            CYOA cyoa = new CYOA(tuneurl_id, option, mp3_url);
+
+                            CYOAArray.add(cyoa);
+                        }
                     }
                     catch (Exception e) {
 
                         e.printStackTrace();
                     }
                 }
+
+                playDefault = true;
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+
+                            CYOA cyoa = new CYOA(tuneurl_id, "", default_mp3_url);
+
+                            if (playDefault) {
+
+                                playOption(cyoa);
+                            }
+                        }
+                        catch (Exception e){
+
+                            e.printStackTrace();
+                        }
+                    }
+                }, DEFAULT_PLAY_DELAY);
 
                 showOptions(CYOAArray);
             }
@@ -175,6 +224,10 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
 
                     if(button != null) {
 
+                        optionMap.put(option.getOption(), option);
+
+                        buttonMap.put(option.getOption(), button);
+
                         optionsLayout.addView(button);
                     }
                 }
@@ -195,13 +248,13 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
 
             button.setPadding(10, 10, 10, 10);
             button.setTextSize(24);
-            button.setBackgroundResource(R.drawable.round_button_open);
+            button.setBackgroundResource(R.drawable.round_button_option);
             button.setText(option.getOption());
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    playFile(option.getMp3Url());
+                    playOption(option);
                 }
             });
 
@@ -220,8 +273,76 @@ public class CYOAActivity extends AppCompatActivity implements Constants {
     }
 
 
-    private void playFile(final String mp3_url){
+    private void markButtons(CYOA option){
+
+        for (String key : buttonMap.keySet()) {
+
+            try {
+
+                if (key.equals(option.getOption())) {
+
+                    buttonMap.get(key).setBackgroundResource(R.drawable.round_button_option_selected);
+                }
+                else {
+
+                    buttonMap.get(key).setBackgroundResource(R.drawable.round_button_option);
+                }
+            }
+            catch (Exception e){
+
+                e.printStackTrace();
+            }
+        }
+    }
 
 
+    private void playOption(CYOA option){
+
+        playDefault = false;
+
+        try {
+
+            Uri uri = Uri.parse(option.getMp3Url());
+
+            MediaController mediaController = new MediaController(this);
+
+            mediaController.setEnabled(true);
+            mediaController.setAnchorView(mediaplayerView);
+            mediaController.setMediaPlayer(mediaplayerView);
+
+            mediaplayerView.setMediaController(mediaController);
+
+            mediaplayerView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    try{
+
+                        handler.postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        mediaController.show(0);
+                                    }},
+                                100);
+                    }
+                    catch (Exception e){
+
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            mediaplayerView.setVideoURI(uri);
+            mediaplayerView.start();
+
+            Toast.makeText(this, "Loading ...", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+
+            e.printStackTrace();
+        }
+
+        markButtons(option);
     }
 }
