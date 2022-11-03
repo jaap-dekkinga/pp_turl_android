@@ -25,7 +25,7 @@ public class DownloadServiceCallbacksImpl implements DownloadServiceCallbacks {
         intent.putExtra(MainActivity.EXTRA_FRAGMENT_TAG, CompletedDownloadsFragment.TAG);
         return PendingIntent.getActivity(context,
                 R.id.pending_intent_download_service_notification, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DownloadServiceCallbacksImpl implements DownloadServiceCallbacks {
         activityIntent.putExtra(DownloadAuthenticationActivity.ARG_DOWNLOAD_REQUEST, request);
         return PendingIntent.getActivity(context.getApplicationContext(),
                 request.getSource().hashCode(), activityIntent,
-                PendingIntent.FLAG_ONE_SHOT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DownloadServiceCallbacksImpl implements DownloadServiceCallbacks {
         args.putBoolean(CompletedDownloadsFragment.ARG_SHOW_LOGS, true);
         intent.putExtra(MainActivity.EXTRA_FRAGMENT_ARGS, args);
         return PendingIntent.getActivity(context, R.id.pending_intent_download_service_report, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
@@ -54,6 +54,6 @@ public class DownloadServiceCallbacksImpl implements DownloadServiceCallbacks {
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_FRAGMENT_TAG, QueueFragment.TAG);
         return PendingIntent.getActivity(context, R.id.pending_intent_download_service_autodownload_report, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 }

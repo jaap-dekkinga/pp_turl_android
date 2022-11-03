@@ -3,7 +3,7 @@ android {
 
     defaultConfig {
         minSdk 28
-        targetSdk 30
+        targetSdk 31
 
         multiDexEnabled true
         vectorDrawables.useSupportLibrary true

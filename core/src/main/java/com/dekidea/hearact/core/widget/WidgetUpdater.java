@@ -216,7 +216,7 @@ public abstract class WidgetUpdater {
         startingIntent.putExtra(Intent.EXTRA_KEY_EVENT, event);
 
         return PendingIntent.getBroadcast(context, eventCode, startingIntent,
-                (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_IMMUTABLE);
     }
 
     private static String getProgressString(int position, int duration, float speed) {

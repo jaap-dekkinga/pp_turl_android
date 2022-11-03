@@ -286,7 +286,7 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         mediaButtonIntent.setComponent(eventReceiver);
         PendingIntent buttonReceiverIntent = PendingIntent.getBroadcast(this, 0, mediaButtonIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0));
+                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_IMMUTABLE));
 
         mediaSession = new MediaSessionCompat(getApplicationContext(), TAG, eventReceiver, buttonReceiverIntent);
         setSessionToken(mediaSession.getSessionToken());
@@ -611,29 +611,17 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
         intentAllowThisTime.setAction(EXTRA_ALLOW_STREAM_THIS_TIME);
         intentAllowThisTime.putExtra(EXTRA_ALLOW_STREAM_THIS_TIME, true);
         PendingIntent pendingIntentAllowThisTime;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAllowThisTime = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAllowThisTime = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_this_time, intentAllowThisTime, PendingIntent.FLAG_UPDATE_CURRENT
-                            | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        }
+        pendingIntentAllowThisTime = PendingIntent.getForegroundService(this,
+                R.id.pending_intent_allow_stream_this_time, intentAllowThisTime,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Intent intentAlwaysAllow = new Intent(intentAllowThisTime);
         intentAlwaysAllow.setAction(EXTRA_ALLOW_STREAM_ALWAYS);
         intentAlwaysAllow.putExtra(EXTRA_ALLOW_STREAM_ALWAYS, true);
         PendingIntent pendingIntentAlwaysAllow;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pendingIntentAlwaysAllow = PendingIntent.getForegroundService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pendingIntentAlwaysAllow = PendingIntent.getService(this,
-                    R.id.pending_intent_allow_stream_always, intentAlwaysAllow, PendingIntent.FLAG_UPDATE_CURRENT
-                            | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        }
+        pendingIntentAlwaysAllow = PendingIntent.getForegroundService(this,
+                R.id.pending_intent_allow_stream_always, intentAlwaysAllow,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 NotificationUtils.CHANNEL_ID_USER_ACTION)
@@ -1315,8 +1303,7 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
         // showRewindOnCompactNotification() corresponds to the "Set Lockscreen Buttons"
         // Settings in UI.
         // Hence, from user perspective, he/she is setting the buttons for Lockscreen
-        return (UserPreferences.showRewindOnCompactNotification() &&
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP));
+        return UserPreferences.showRewindOnCompactNotification() && false;
     }
 
     private void updateNotificationAndMediaSession(final Playable p) {
@@ -1347,7 +1334,7 @@ public class PlaybackService extends MediaBrowserServiceCompat implements Consta
         if (stateManager.hasReceivedValidStartCommand()) {
             mediaSession.setSessionActivity(PendingIntent.getActivity(this, R.id.pending_intent_player_activity,
                     PlaybackService.getPlayerActivityIntent(this), PendingIntent.FLAG_UPDATE_CURRENT
-                            | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0)));
+                            | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_IMMUTABLE)));
             try {
                 mediaSession.setMetadata(builder.build());
             } catch (OutOfMemoryError e) {

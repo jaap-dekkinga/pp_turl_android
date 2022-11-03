@@ -129,7 +129,7 @@ public class PlaybackServiceNotificationBuilder {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && drawable instanceof VectorDrawable) {
+        } else if (drawable instanceof VectorDrawable) {
             return getBitmap((VectorDrawable) drawable);
         } else {
             return null;
@@ -173,8 +173,7 @@ public class PlaybackServiceNotificationBuilder {
 
     private PendingIntent getPlayerActivityPendingIntent() {
         return PendingIntent.getActivity(context, R.id.pending_intent_player_activity,
-                PlaybackService.getPlayerActivityIntent(context), PendingIntent.FLAG_UPDATE_CURRENT
-                        | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PlaybackService.getPlayerActivityIntent(context), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     private void addActions(NotificationCompat.Builder notification, MediaSessionCompat.Token mediaSessionToken,
@@ -243,13 +242,8 @@ public class PlaybackServiceNotificationBuilder {
         intent.setAction("MediaCode" + keycodeValue);
         intent.putExtra(MediaButtonReceiver.EXTRA_KEYCODE, keycodeValue);
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            return PendingIntent.getForegroundService(context, requestCode, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            return PendingIntent.getService(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT
-                    | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
-        }
+        return PendingIntent.getForegroundService(context, requestCode, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     public void setMediaSessionToken(MediaSessionCompat.Token mediaSessionToken) {

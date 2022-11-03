@@ -90,6 +90,8 @@ import com.dekidea.hearact.R;
 
 import com.dekidea.hearact.view.LockableBottomSheetBehavior;
 
+import java.util.ArrayList;
+
 /**
  * The activity that is shown when the user launches the app.
  */
@@ -773,12 +775,9 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
                         AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
                 return true;
             case KeyEvent.KEYCODE_M:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                            AudioManager.ADJUST_TOGGLE_MUTE, AudioManager.FLAG_SHOW_UI);
-                    return true;
-                }
-                break;
+                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                        AudioManager.ADJUST_TOGGLE_MUTE, AudioManager.FLAG_SHOW_UI);
+                return true;
         }
 
         if (customKeyCode != null) {
@@ -811,7 +810,7 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
     public PreferenceFragmentCompat openScreen(int screen) {
 
         PreferenceFragmentCompat fragment = getPreferenceScreen(screen);
-        if (screen == R.xml.preferences_notifications && Build.VERSION.SDK_INT >= 26) {
+        if (screen == R.xml.preferences_notifications) {
             Intent intent = new Intent();
             intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
             intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
@@ -915,6 +914,10 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
 
             alertNeedsOverlayPermission();
         }
+        else{
+
+            checkOtherPermissions();
+        }
         /*
         else if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -982,7 +985,8 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
     }
 
     private static final int REQUEST_PHONE_CALL_PERMISSION = 1234;
-    
+    private static final int PERMISSIONS_REQUEST = 2345;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] results) {
 
@@ -1001,6 +1005,23 @@ public class MainActivity extends CastEnabledActivity implements SearchPreferenc
 
                 return;
             }
+        }
+    }
+
+
+    private void checkOtherPermissions() {
+
+        ArrayList<String> missingPermisions = new ArrayList<>();
+
+        if (checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
+            missingPermisions.add(android.Manifest.permission.READ_PHONE_STATE);
+        }
+
+        if (missingPermisions.size() > 0) {
+
+            String[] permissions = missingPermisions.toArray(new String[missingPermisions.size()]);
+            ActivityCompat.requestPermissions(this, permissions, PERMISSIONS_REQUEST);
         }
     }
 }

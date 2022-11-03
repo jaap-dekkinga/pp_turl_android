@@ -18,9 +18,7 @@ public class VideoPlayerActivityStarter {
         this.context = context;
         intent = new Intent(INTENT);
         intent.setPackage(context.getPackageName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
     }
 
     public Intent getIntent() {
@@ -29,7 +27,7 @@ public class VideoPlayerActivityStarter {
 
     public PendingIntent getPendingIntent() {
         return PendingIntent.getActivity(context, R.id.pending_intent_video_player, getIntent(),
-                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     public void start() {
